@@ -1,0 +1,14 @@
+# VERSION: 0.1
+# REVISION: 0
+# NAME: input-allow
+# REQUIRES: core
+
+if [ ! -z "${INPUT_ALLOW[*]}" ]; then
+ iptables -N INPUT_ALLOW
+ iptables -A INPUT -m state --state NEW,RELATED -j INPUT_ALLOW
+ for i in ${INPUT_ALLOW[@]}; do
+  PORT=`echo $i | cut -d/ -f1`
+  PROTO=`echo $i | cut -d/ -f2`
+  iptables -A INPUT_ALLOW -p $PROTO --dport $PORT -j ACCEPT
+ done
+fi

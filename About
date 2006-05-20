@@ -1,0 +1,21 @@
+Project name: Blackhole
+Version: 1.0-ARCH1
+Developer/maintainer: predatorfreak
+
+Requirements: A Bourne-compatible shell, GNU coreutils and iptables.
+
+About: Blackhole is a fork of predatorwall, focusing heavily
+on utilising iptables and modular code, to allow easy extension
+and modification. It inherits most of the filtering rules from
+predatorwall but changes the code layout massively. Another notable
+thing about Blackhole is that it inherits installer/upgrader from
+predatorwall, albeit in a modified form.
+
+Features:
+Clean design and development model
+Modular code and clean layout.
+Flexible configuration system.
+TCP state flag inspection.
+TCP flood protection.
+Spoofing protection.
+Optional dropped packet logging.

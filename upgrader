@@ -1,0 +1,160 @@
+#!/bin/sh
+# upgrader
+# Written by: predatorfreak
+
+if [ ! `whoami` = "root" ]; then
+ echo "You must be root in order to upgrade blackhole."
+ exit 1
+fi
+
+if [ -f $PWD/config/installation.conf ] && [ -f $PWD/config/blackhole.conf ]; then
+ if [ -f includes/installation-functions ]; then
+  . includes/installation-functions
+  . $PWD/config/{installation.conf,blackhole.conf}
+ else
+  echo "Unable to load the required functions."
+  exit 1
+ fi
+else
+ echo "Unable to load the configuration file."
+ exit 1
+fi
+
+case "$1" in
+slackware)
+if [ -d /etc/blackhole ]; then
+ echo "Upgrading slackware installation"
+ if [ "$RCUP" = "ON" ]; then
+  echo "Upgrading init scripts.."
+  rcins slackware
+ else
+  echo "Init scripts will not be upgraded."
+ fi
+ if [ "$BASE" = "ON" ]; then
+  echo "Upgrading base.."
+  createdirs 
+  cp -i config/blackhole.conf /etc/blackhole/
+  cp includes/* $PREFIX/share/blackhole/includes/
+  cp blackhole $PREFIX/bin/blackhole
+  chmod +x $PREFIX/bin/blackhole
+ else
+  echo "Aborting upgrade."
+  exit 1
+ fi
+ applyrules
+ echo "Done."
+ exit 0
+else
+ echo "Upgrader: The directory /etc/blackhole doesn't exist, please run installer instead."
+ exit 1
+fi
+;;
+gentoo)
+if [ -d /etc/blackhole ]; then
+ echo "Upgrading gentoo installation"
+ if [ "$BASE" = "ON" ]; then
+  echo "Upgrading base.."
+  createdirs 
+  cp -i config/blackhole.conf /etc/blackhole/
+  cp includes/* $PREFIX/share/blackhole/includes/
+  cp blackhole $PREFIX/bin/blackhole
+  chmod +x $PREFIX/bin/blackhole
+ else
+  echo "Aborting upgrade."
+  exit 1
+ fi
+ applyrules
+ echo "Done."
+ exit 0
+else
+ echo "Upgrader: The directory /etc/blackhole doesn't exist, please run installer instead."
+ exit 1
+fi
+;;
+fedora)
+if [ -d /etc/blackhole ]; then
+ echo "Upgrading fedora installation"
+ if [ "$BASE" = "ON" ]; then
+  echo "Upgrading base.."
+  createdirs 
+  cp -i config/blackhole.conf /etc/blackhole/
+  cp includes/* $PREFIX/share/blackhole/includes/
+  cp blackhole $PREFIX/bin/blackhole
+  chmod +x $PREFIX/bin/blackhole
+ else
+  echo "Aborting upgrade."
+  exit 1
+ fi
+ applyrules
+ echo "Done."
+ exit 0
+else
+ echo "Upgrader: The directory /etc/blackhole doesn't exist, please run installer instead."
+ exit 1
+fi
+;;
+mandriva)
+if [ -d /etc/blackhole ]; then
+ echo "Upgrading mandriva installation"
+ if [ "$BASE" = "ON" ]; then
+  echo "Upgrading base.."
+  createdirs 
+  cp -i config/blackhole.conf /etc/blackhole/
+  cp includes/* $PREFIX/share/blackhole/includes/
+  cp blackhole $PREFIX/bin/blackhole
+  chmod +x $PREFIX/bin/blackhole
+ else
+  echo "Aborting upgrade."
+  exit 1
+ fi
+ applyrules
+ echo "Done."
+ exit 0
+else
+ echo "Upgrader: The directory /etc/blackhole doesn't exist, please run installer instead."
+ exit 1
+fi
+;;
+crux)
+if [ -d /etc/blackhole ]; then
+ echo "Upgrading crux installation"
+ if [ "$RCUP" = "ON" ]; then
+  echo "Upgrading init scripts.."
+  rcins crux
+ else
+  echo "Init scripts will not be upgraded."
+ fi
+ if [ "$BASE" = "ON" ]; then
+  echo "Upgrading base.."
+  createdirs
+  cp -i config/blackhole.conf /etc/blackhole/
+  cp includes/* $PREFIX/share/blackhole/includes/
+  cp blackhole $PREFIX/bin/blackhole
+  chmod +x $PREFIX/bin/blackhole
+ else
+  echo "Aborting upgrade."
+  exit 1
+ fi
+ applyrules
+ echo "Done."
+ exit 0
+else
+ echo "Upgrader: The directory /etc/blackhole doesn't exist, please run installer instead."
+ exit 1
+fi
+;;
+*)
+echo "upgrader -"
+echo "A streamlined upgrade system for blackhole"
+echo
+echo "Usage: ./upgrader [OPTION]"
+echo
+echo "Options:"
+echo "slackware"
+echo "gentoo"
+echo "fedora"
+echo "mandriva"
+echo "crux"
+exit 0
+;;
+esac

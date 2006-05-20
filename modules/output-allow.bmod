@@ -1,0 +1,14 @@
+# VERSION: 0.1
+# REVISION: 0
+# NAME: output-allow
+# REQUIRES: core
+
+if [ ! -z "${OUTPUT_ALLOW[*]}" ]; then
+ iptables -N OUTPUT_ALLOW
+ iptables -A OUTPUT -m state --state NEW,RELATED -j OUTPUT_ALLOW
+ for i in ${OUTPUT_ALLOW[@]}; do
+  PORT=`echo $i | cut -d/ -f1`
+  PROTO=`echo $i | cut -d/ -f2`
+  iptables -A OUTPUT_ALLOW -p $PROTO --dport $PORT -j ACCEPT
+ done
+fi
