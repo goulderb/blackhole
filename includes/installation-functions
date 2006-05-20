@@ -1,6 +1,5 @@
 # includes/installation-functions: Functions used only in installation
 # Written by: predatorfreak
-# Required headers: functions
 
 createdirs() {
 if [ ! -d /etc/blackhole/ ]; then
@@ -17,8 +16,7 @@ fi
 
 applyrules() {
 if [ $APPLY = "ON" ]; then
- $PREFIX/bin/blackhole stop
- $PREFIX/bin/blackhole start
+ $PREFIX/bin/blackhole restart
 else
  echo "Warning: The new rules have not been set"
  echo "If you wish to set them at a later date"

@@ -19,9 +19,6 @@ fi
 if [ -f /etc/blackhole/blackhole.conf ]; then
  . /etc/blackhole/blackhole.conf
  export CONFDIR=/etc/blackhole
-elif [ -f $PREFIX/etc/blackhole/blackhole.conf ]; then
- . $PREFIX/etc/blackhole/blackhole.conf
- export CONFDIR=$PREFIX/etc/blackhole
 elif [ -f $PWD/config/blackhole.conf ]; then
  . $PWD/config/blackhole.conf
  export CONFDIR=$PWD/config
