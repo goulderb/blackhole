@@ -6,10 +6,12 @@ if [ ! -d /etc/blackhole/ ]; then
  mkdir -p /etc/blackhole/
 fi
 if [ ! -d $PREFIX/share/blackhole ]; then
- mkdir -p $PREFIX/share/blackhole/includes
+ mkdir -p $PREFIX/share/blackhole/{includes,modules}
 else
  if [ ! -d $PREFIX/share/blackhole/includes ]; then
   mkdir $PREFIX/share/blackhole/includes
+ elif [ ! -d $PREFIX/share/blackhole/modules ]; then
+  mkdir $PREFIX/share/blackhole/modules
  fi
 fi
 }

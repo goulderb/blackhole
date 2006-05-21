@@ -7,15 +7,6 @@ if [ ! `whoami` = "root" ]; then
  exit 1
 fi
 
-if [ -d $PREFIX/share/blackhole/modules ] && [ -f $PREFIX/share/blackhole/modules/core.bmod ]; then
- MODDIR=$PREFIX/share/blackhole/modules
-elif [ -d $PWD/modules ] && [ -f $PWD/modules/core.bmod ]; then
- MODDIR=$PWD/modules
-else
- echo "Modules directory doesn't exist, dieing."
- exit 1
-fi
-
 if [ -f /etc/blackhole/blackhole.conf ]; then
  . /etc/blackhole/blackhole.conf
  export CONFDIR=/etc/blackhole
@@ -24,6 +15,15 @@ elif [ -f $PWD/config/blackhole.conf ]; then
  export CONFDIR=$PWD/config
 else
  echo "Couldn't find configuration file, dieing."
+ exit 1
+fi
+
+if [ -d $PREFIX/share/blackhole/modules ] && [ -f $PREFIX/share/blackhole/modules/core.bmod ]; then
+ MODDIR=$PREFIX/share/blackhole/modules
+elif [ -d $PWD/modules ] && [ -f $PWD/modules/core.bmod ]; then
+ MODDIR=$PWD/modules
+else
+ echo "Modules directory doesn't exist, dieing."
  exit 1
 fi
 

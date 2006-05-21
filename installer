@@ -8,8 +8,9 @@ fi
 
 if [ -f $PWD/config/installation.conf ] && [ -f $PWD/config/blackhole.conf ]; then
  if [ -f $PWD/includes/installation-functions ]; then
+  . $PWD/config/installation.conf
+  . $PWD/config/blackhole.conf
   . $PWD/includes/installation-functions
-  . $PWD/config/{installation.conf,blackhole.conf}
  else
   echo "Unable to load the required functions."
   exit 1
@@ -34,6 +35,7 @@ if [ ! -d /etc/blackhole ]; then
   createdirs
   cp config/blackhole.conf /etc/blackhole/
   cp includes/* $PREFIX/share/blackhole/includes/
+  cp modules/* $PREFIX/share/blackhole/modules/
   cp blackhole $PREFIX/bin/blackhole
   chmod +x $PREFIX/bin/blackhole
  else
@@ -56,6 +58,7 @@ if [ ! -d /etc/blackhole ]; then
   createdirs linux
   cp config/blackhole.conf /etc/blackhole/
   cp includes/* $PREFIX/share/blackhole/includes/
+  cp modules/* $PREFIX/share/blackhole/modules/
   cp blackhole $PREFIX/bin/blackhole
   chmod +x $PREFIX/bin/blackhole
  else
@@ -78,6 +81,7 @@ if [ ! -d /etc/blackhole ]; then
   createdirs
   cp config/blackhole.conf /etc/blackhole/
   cp includes/* $PREFIX/share/blackhole/includes/
+  cp modules/* $PREFIX/share/blackhole/modules/
   cp blackhole $PREFIX/bin/blackhole
   chmod +x $PREFIX/bin/blackhole
  else
@@ -100,6 +104,7 @@ if [ ! -d /etc/blackhole ]; then
   createdirs
   cp config/blackhole.conf /etc/blackhole/
   cp includes/* $PREFIX/share/blackhole/includes/
+  cp modules/* $PREFIX/share/blackhole/modules/
   cp blackhole $PREFIX/bin/blackhole
   chmod +x $PREFIX/bin/blackhole
  else
@@ -128,6 +133,7 @@ if [ ! -d /etc/blackhole ]; then
   createdirs
   cp config/blackhole.conf /etc/blackhole/
   cp includes/* $PREFIX/share/blackhole/includes/
+  cp modules/* $PREFIX/share/blackhole/modules/
   cp blackhole $PREFIX/bin/blackhole
   chmod +x $PREFIX/bin/blackhole
  else
