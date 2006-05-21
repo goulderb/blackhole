@@ -34,7 +34,7 @@ if [ -d /etc/blackhole ]; then
  if [ "$BASE" = "ON" ]; then
   echo "Upgrading base.."
   createdirs
-  cp -i config/blackhole.conf /etc/blackhole/
+  cp -i config/{blackhole.conf,state.conf} /etc/blackhole/
   cp includes/* $PREFIX/share/blackhole/includes/
   cp modules/* $PREFIX/share/blackhole/modules/
   cp blackhole $PREFIX/bin/blackhole
@@ -57,7 +57,7 @@ if [ -d /etc/blackhole ]; then
  if [ "$BASE" = "ON" ]; then
   echo "Upgrading base.."
   createdirs $PREIFX $PREFIX
-  cp -i config/blackhole.conf /etc/blackhole/
+  cp -i config/{blackhole.conf,state.conf} /etc/blackhole/
   cp includes/* $PREFIX/share/blackhole/includes/
   cp modules/* $PREFIX/share/blackhole/modules/
   cp blackhole $PREFIX/bin/blackhole
@@ -80,7 +80,7 @@ if [ -d /etc/blackhole ]; then
  if [ "$BASE" = "ON" ]; then
   echo "Upgrading base.."
   createdirs $PREIFX 
-  cp -i config/blackhole.conf /etc/blackhole/
+  cp -i config/{blackhole.conf,state.conf} /etc/blackhole/
   cp includes/* $PREFIX/share/blackhole/includes/
   cp modules/* $PREFIX/share/blackhole/modules/
   cp blackhole $PREFIX/bin/blackhole
@@ -103,7 +103,7 @@ if [ -d /etc/blackhole ]; then
  if [ "$BASE" = "ON" ]; then
   echo "Upgrading base.."
   createdirs $PREIFX 
-  cp -i config/blackhole.conf /etc/blackhole/
+  cp -i config/{blackhole.conf,state.conf} /etc/blackhole/
   cp includes/* $PREFIX/share/blackhole/includes/
   cp modules/* $PREFIX/share/blackhole/modules/
   cp blackhole $PREFIX/bin/blackhole
@@ -132,7 +132,7 @@ if [ -d /etc/blackhole ]; then
  if [ "$BASE" = "ON" ]; then
   echo "Upgrading base.."
   createdirs $PREIFX
-  cp -i config/blackhole.conf /etc/blackhole/
+  cp -i config/{blackhole.conf,state.conf} /etc/blackhole/
   cp includes/* $PREFIX/share/blackhole/includes/
   cp modules/* $PREFIX/share/blackhole/modules/
   cp blackhole $PREFIX/bin/blackhole

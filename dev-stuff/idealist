@@ -1,1 +1,7 @@
-Add modules for handling specialised tasks.
+Add modules for handling specialised tasks:
+Specialised port opening can be done using the input/output-allow modules.
+Possibly handle management of iptables logs?
+
+Automatic iptables failchecking:
+Use a function that gathers all the arguments passed to it and send them to
+iptables, then call failcheck to make sure iptables didn't die.

@@ -1,3 +1,10 @@
+Version: 1.0-ARCH2
+Changes:
+Fix up a number of problems with the initial commited code.
+Improve upgrader/installer.
+Add state support to input/output-allow.
+Clean up passive-ftp.
+
 Version: 1.0-ARCH1
 Changes:
 First bunch of code commited to the Arch mirror.

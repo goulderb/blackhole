@@ -9,6 +9,9 @@ if [ ! -z "${OUTPUT_ALLOW[*]}" ]; then
  for i in ${OUTPUT_ALLOW[@]}; do
   PORT=`echo $i | cut -d/ -f1`
   PROTO=`echo $i | cut -d/ -f2`
-  iptables -A OUTPUT_ALLOW -p $PROTO --dport $PORT -j ACCEPT
+  if [ -f $CONFDIR/state.conf ]; then
+   STATE=`grep $PORT/output $CONFDIR/state.conf | cut -d: -f2 | sed 's/\s//'`
+  fi
+  iptables -A OUTPUT_ALLOW -p $PROTO --dport $PORT $STATE -j ACCEPT
  done
 fi
