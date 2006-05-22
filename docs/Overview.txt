@@ -1,0 +1,100 @@
+Documentation: Blackhole overview
+Written by: Brett 'predatorfreak' Goulder.
+
+Section 1: Blackhole, the modular predatorwall.
+Predatorwall, from which some of the iptables rules in Blackhole are based
+or taken, is my first attempt at a clean, simple and effective UNIX firewall
+system. Now, don't get me wrong when I say this, but predatorwall has grown too
+monolithic to be maintainable in the long run with the kind of expansion I want it
+to have, at least not without massive changes.
+
+This is where Blackhole comes in, it is a "fork" of predatorwall designed to
+be modular and highly efficient, while being Linux/iptables centric. I decided
+not to try to bring Blackhole to all the different platforms in the UNIX world,
+as there are simply put, far too many for me to investigate and add support for
+in a simple fashion.
+
+Most other platforms also lack the scriptability of iptables, making them less ideal
+for Blackhole as a result. I also wanted to start fresh, with an entirely new design,
+focusing more on modularity and simple code than on adding options to deal with
+specific environments. Trust me, one of the major downfalls of predatorwall is it's
+lack of easy customisation. It's simply too hard for the average system adminstrator
+to add a new feature without adding to the monolithic start.sh, which is a hulking
+beast.
+
+Predatorwall also has to maintain backwords compatibility for users, making
+implementing modularity in predatorwall impossible without huge amounts of unneeded
+code.
+
+Section 2: What this means for the end-user.
+Already I've began to add numerous features which are immediately useful to any
+end-user who has to open certain ports or wants to configure how the port is opened.
+What am I talking about you may ask yourself? I'm talking about the input/output-allow
+modules.
+
+Input/output-allow are replacements for the archiac udpallow/tcpallow options in
+predatorwall, these do both full outbound opening and full inbound openiong and
+have a FAR cleaner configuration method than udpallow/tcpallow, which used entire
+directories to determine which ports to open. I used a bash-specific feature to support
+this in a clean way, arrays. Simply put, the arrays used by input/output-allow simplify
+the configuration of both down too adding "22/tcp" to open ssh on the TCP protocol to
+an array, which looks something like INPUT_ALLOW=(22/tcp), yup, it's that much better.
+
+Input/output-allow also support manipulating state as needed for the ports, in a generic
+and simple fashion. A configuration file, called state.conf, holds lines along the lines
+of "22/output: -m state --state ESTABLISHED", which is parsed using only grep, cut and sed.
+
+In addition to this, rather than parsing a huge monolithic script and also HOPING that
+everything fits together with jumbled options, I was able to add "dependency" information
+to the modules, allowing modules to be interlocked and loaded, so that you don't end up
+without something that module b requires from module a. Other information kept in the header
+section with dependency information is the name, version and revision. This could all be
+easily expaned at a later point. Although this has been partially solved in predatorwall
+by hard environment checks, it's still not nearly as simple or nice.
+
+Now you are probably asking, "surely this must come at a cost of complex code?", and you'd
+be wrong. The parsing code is actually incredibly simple, just using grep, cut and sed to
+parse the header information in the modules. I've always strived to make the simplest
+functioning code possible and I believe I have done so quite well with Blackhole.
+
+Section 3: What this means for the developer/system adminstrator.
+System adminstrators rejoice! You can now easily create and add modules that Blackhole can
+use by simply adding them to one directory. Predatorwall had serious limitations on being
+fit to the system adminstrator's tastes/needs, because it's iptables rules were monolithic
+and hard to extend upon without editing the primary script, start.sh. I've known this for
+a long, long time.
+
+So, I went from monolithic structured to modular structured, allowing modules to be easily
+added or removed by adding them to /usr/share/blackhole/modules or similar, per user taste.
+Whenever you add a module to the modules directory and want to use it, you just edit the
+main configuration file, blackhole.conf, and changed the modules array. Here's an example,
+say for example we had "core", the standard inbound/outbound blocking rules, loaded and
+wanted to add a module called "ip-block", which had a configuration file that allowed
+it to block specific IPs, well, here's how we'd do it.
+
+Here's our array before adding ip-block: MODULES=(core)
+Here's our array after adding ip-block: MODULES=(core ip-block)
+
+Then we simply run /usr/bin/blackhole restart and it will use the module ip-block and
+add the rules ip-block dictates.
+
+The greatest thing about this system is how I left the ability to customise modules to
+to any extent you want, you're only really required to make it work with Blackhole and
+mark it with the proper header information.
+
+Section 4: Why does all this even matter?
+Because, this allows me to take drastic steps with Blackhole than I can't do in
+predatorwall because of how monolithic it is and backwards compatibility. With
+Blackhole, if I want to drastically overhaul a feature, I simply create a new
+module and mark the old one as "Obsolete", allowing users to migrate over time.
+With predatorwall, although this could be done, it would add so much extra code
+to the primary script that it would be bloat, so I would be forced to choose
+between backwards compatibility and overhauling features to improve them.
+
+Blackhole is also just much cleaner because I no longer have to do hard environment
+checks to enable things, I can now just parse an array. The code is slightly more
+"complex" to deal with loading modules, but not much more than upgrader/installer
+have become. Predatorwall will continue to be developed, but it will be obsoleted
+over a period of time, until around version 10.0 (everything from now on will be
+minor code improvements, no new features or overhauls.), after which point it will
+be entirely abandoned in favour of Blackhole.

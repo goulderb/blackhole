@@ -1,5 +1,11 @@
 Version: 1.0-ARCH2
 Changes:
+Add some documentation.
+Stop using includes/* in upgrader/installer, it's not clean.
+Update the todolist, hopefully I can get to 1.0 in a month or so.
+
+Version: 1.0-ARCH2
+Changes:
 Fix up a number of problems with the initial commited code.
 Improve upgrader/installer.
 Add state support to input/output-allow.
