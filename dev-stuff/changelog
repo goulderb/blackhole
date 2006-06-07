@@ -1,4 +1,12 @@
-Version: 1.0-ARCH2
+Version 1.0-ARCH4
+Changes:
+Let's skip documentation until 1.5/2.0, so we can get this thing published.
+Completely kill passive-ftp, it's been obsoleted by output/input-allow.
+Rename "state" too "extended options", extended options better explains the
+function of it.
+Remove the modules documentation, it wasn't very good.
+
+Version: 1.0-ARCH3
 Changes:
 Add some documentation.
 Stop using includes/* in upgrader/installer, it's not clean.

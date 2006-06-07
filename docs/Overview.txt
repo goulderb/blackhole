@@ -40,8 +40,8 @@ this in a clean way, arrays. Simply put, the arrays used by input/output-allow s
 the configuration of both down too adding "22/tcp" to open ssh on the TCP protocol to
 an array, which looks something like INPUT_ALLOW=(22/tcp), yup, it's that much better.
 
-Input/output-allow also support manipulating state as needed for the ports, in a generic
-and simple fashion. A configuration file, called state.conf, holds lines along the lines
+Input/output-allow also support manipulating extended options as needed for the ports, in a generic
+and simple fashion. A configuration file, called extopts.conf, holds lines along the lines
 of "22/output: -m state --state ESTABLISHED", which is parsed using only grep, cut and sed.
 
 In addition to this, rather than parsing a huge monolithic script and also HOPING that

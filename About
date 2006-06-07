@@ -7,9 +7,8 @@ Requirements: Bash and iptables.
 About: Blackhole is a fork of predatorwall, focusing heavily
 on utilising iptables and modular code, to allow easy extension
 and modification. It inherits most of the filtering rules from
-predatorwall but changes the code layout massively. Another notable
-thing about Blackhole is that it inherits installer/upgrader from
-predatorwall, albeit in a modified form.
+predatorwall but changes the general code massively. It sacrifices
+BSD support for improved code and design.
 
 Features:
 Clean design and development model.

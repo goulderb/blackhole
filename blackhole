@@ -3,7 +3,7 @@
 
 # Environment checks.
 if [ ! `whoami` = "root" ]; then
- echo "Blackhole requires root privilages to be able to apply iptables rules."
+ echo "Blackhole requires root privilages to modify iptables rules."
  exit 1
 fi
 
@@ -37,11 +37,6 @@ else
 fi
 
 case "$1" in
-printmodules)
-for i in $MODDIR/*.bmod; do
- echo "$i"
-done
-;;
 start)
 if [ $LOG_DROPPED_PACKETS = "YES" ]; then
  iptables -N LOG_DROP
