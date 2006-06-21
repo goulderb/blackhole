@@ -25,12 +25,7 @@ case "$1" in
 slackware)
 if [ -d /etc/blackhole ]; then
  echo "Upgrading slackware installation"
- if [ "$RCUP" = "ON" ]; then
-  echo "Upgrading init scripts.."
-  rcins slackware
- else
-  echo "Init scripts will not be upgraded."
- fi
+ rcins slackware
  if [ "$BASE" = "ON" ]; then
   echo "Upgrading base.."
   createdirs
@@ -123,12 +118,7 @@ fi
 crux)
 if [ -d /etc/blackhole ]; then
  echo "Upgrading crux installation"
- if [ "$RCUP" = "ON" ]; then
-  echo "Upgrading init scripts.."
-  rcins crux
- else
-  echo "Init scripts will not be upgraded."
- fi
+ rcins crux
  if [ "$BASE" = "ON" ]; then
   echo "Upgrading base.."
   createdirs $PREIFX

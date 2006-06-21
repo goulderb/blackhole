@@ -4,14 +4,12 @@
 # REQUIRES: core
 
 if [ ! -z "${INPUT_ALLOW[*]}" ]; then
- iptables -N INPUT_ALLOW
- iptables -A INPUT -m state --state NEW,RELATED -j INPUT_ALLOW
  for i in ${INPUT_ALLOW[@]}; do
   PORT=`echo $i | cut -d/ -f1`
   PROTO=`echo $i | cut -d/ -f2`
   if [ -f $CONFDIR/extopts.conf ]; then
    EXTOPTS=`grep $PORT/input $CONFDIR/extopts.conf | cut -d: -f2 | sed 's/\s//'`
   fi
-  iptables -A INPUT_ALLOW -p $PROTO --dport $PORT $EXTOPTS -j ACCEPT
+  iptables -I INPUT 1 -p $PROTO --dport $PORT $EXTOPTS -j ACCEPT
  done
 fi

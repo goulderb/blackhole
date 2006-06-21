@@ -1,3 +1,8 @@
+Version: 1.0
+Changes:
+Minor clean up work in upgrader/installer.
+First official release.
+
 Version 1.0-ARCH4
 Changes:
 Let's skip documentation until 1.5/2.0, so we can get this thing published.

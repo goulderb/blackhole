@@ -25,12 +25,7 @@ case "$1" in
 slackware)
 if [ ! -d /etc/blackhole ]; then
  echo "Beginning slackware installation."
- if [ $RCINS = "ON" ]; then
-  echo "Installing init scripts..."
-  rcins slackware
- else
-  echo "Skipping."
- fi
+ rcins slackware
  if [ $BASE = "ON" ]; then
   echo "Installing base.."
   createdirs
@@ -123,12 +118,7 @@ fi
 crux)
 if [ ! -d /etc/blackhole ]; then
  echo "Beginning slackware installation"
- if [ $RCINS = "ON" ]; then
-  echo "Installing init scripts..."
-  rcins crux
- else
-  echo "Skipping."
- fi
+ rcins crux
  if [ $BASE = "ON" ]; then
   echo "Installing base.."
   createdirs
