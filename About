@@ -4,11 +4,12 @@ Developer/maintainer: predatorfreak
 
 Requirements: Bash and iptables.
 
-About: Blackhole is a fork of predatorwall, focusing heavily
-on utilising iptables and modular code, to allow easy extension
+About: Blackhole is a fork of predatorwall, focusing on heavily
+utilising iptables and modular code, to allow easy extension
 and modification. It inherits most of the filtering rules from
 predatorwall but changes the general code massively. It sacrifices
-BSD support for improved code and design.
+BSD support for improved code and design, along with more extensive
+features such as more flexible port opening.
 
 Features:
 Clean design and development model.
@@ -16,4 +17,5 @@ Modular code and clean layout.
 Flexible configuration system.
 TCP state flag inspection.
 TCP flood limiting.
+Flexible port opening provided by input/output-allow.
 Optional dropped packet logging.
