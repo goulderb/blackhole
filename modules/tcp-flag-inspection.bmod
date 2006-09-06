@@ -17,4 +17,4 @@ iptables -A TCPFLAG -p tcp --tcp-flags SYN,RST SYN,RST -j $DROP
 iptables -A TCPFLAG -p tcp --tcp-flags SYN,FIN SYN,FIN -j $DROP
 iptables -A TCPFLAG -p tcp --tcp-option 128 -j $DROP
 iptables -A TCPFLAG -p tcp --tcp-option 64 -j $DROP
-# iptables -A TCPFLAG -f -j $DROP
+iptables -A TCPFLAG -f -j $DROP

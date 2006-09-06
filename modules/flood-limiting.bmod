@@ -1,6 +1,6 @@
 # VERSION: 0.1
 # REVISION: 0
-# NAME: flood-protection
+# NAME: flood-limiting
 # REQUIRES: core
 
 iptables -N FLOOD

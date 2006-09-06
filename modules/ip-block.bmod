@@ -1,0 +1,12 @@
+# VERSION: 0.1
+# REVISION: 0
+# NAME: ip-block
+# REQUIRES: core
+
+if [ -f $CONFDIR/ipblock.conf ]; then
+ iptables -N IPBLOCK
+ iptables -I INPUT 2
+ for i in `cat $CONFDIR/ipblock.conf`; do
+  iptables -I INPUT -s $i -j $DROP
+ done
+fi
