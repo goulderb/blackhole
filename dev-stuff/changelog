@@ -1,3 +1,15 @@
+Version: 1.1-ARCH Commit 3
+Changes:
+Fix up some problems with rule effectiveness (filter shit before accept
+instead of after, which causes rules to loose effectiveness as only unaccepted
+packets will be filtered not accepted ones, this change should be put into
+effect in predatorwall).
+Fix ip-block typo and update installer/upgrader for it.
+
+Version: 1.1-ARCH Commit 2
+Changes:
+Don't use state past the initial state match, it's pointless and unproductive.
+
 Version: 1.1-ARCH Commit 1
 Changes:
 Includes a quick-implementation ipblock module, needs further expansion to support per-port blocking.

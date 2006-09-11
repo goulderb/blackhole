@@ -29,7 +29,7 @@ if [ ! -d /etc/blackhole ]; then
  if [ $BASE = "ON" ]; then
   echo "Installing base.."
   createdirs
-  cp config/{blackhole.conf,extopts.conf} /etc/blackhole/
+  cp config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
   cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
   cp modules/* $PREFIX/share/blackhole/modules/
   cp blackhole $PREFIX/bin/blackhole
@@ -52,7 +52,7 @@ if [ ! -d /etc/blackhole ]; then
  if [ $BASE = "ON" ]; then
   echo "Installing base.."
   createdirs linux
-  cp config/{blackhole.conf,extopts.conf} /etc/blackhole/
+  cp config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
   cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
   cp modules/* $PREFIX/share/blackhole/modules/
   cp blackhole $PREFIX/bin/blackhole
@@ -75,7 +75,7 @@ if [ ! -d /etc/blackhole ]; then
  if [ $BASE = "ON" ]; then
   echo "Installing base.."
   createdirs
-  cp config/{blackhole.conf,extopts.conf} /etc/blackhole/
+  cp config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
   cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
   cp modules/* $PREFIX/share/blackhole/modules/
   cp blackhole $PREFIX/bin/blackhole
@@ -98,7 +98,7 @@ if [ ! -d /etc/blackhole ]; then
  if [ $BASE = "ON" ]; then
   echo "Installing base.."
   createdirs
-  cp config/{blackhole.conf,extopts.conf} /etc/blackhole/
+  cp config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
   cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
   cp modules/* $PREFIX/share/blackhole/modules/
   cp blackhole $PREFIX/bin/blackhole
@@ -122,7 +122,7 @@ if [ ! -d /etc/blackhole ]; then
  if [ $BASE = "ON" ]; then
   echo "Installing base.."
   createdirs
-  cp config/{blackhole.conf,extopts.conf} /etc/blackhole/
+  cp config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
   cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
   cp modules/* $PREFIX/share/blackhole/modules/
   cp blackhole $PREFIX/bin/blackhole

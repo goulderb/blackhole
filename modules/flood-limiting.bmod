@@ -4,7 +4,7 @@
 # REQUIRES: core
 
 iptables -N FLOOD
-iptables -A INPUT -p tcp -m state --state NEW,RELATED -j FLOOD
+iptables -I INPUT 2 -j FLOOD
 iptables -A FLOOD -p tcp --syn -m limit --limit 20/s --limit-burst 5 -j $DROP
 iptables -A FLOOD -p tcp --tcp-flags SYN,ACK,FIN,RST RST -m limit --limit 20/s --limit-burst 5 -j $DROP
 iptables -A FLOOD -p icmp --icmp-type echo-request -m limit --limit 20/s --limit-burst 5 -j $DROP

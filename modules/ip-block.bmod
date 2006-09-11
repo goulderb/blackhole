@@ -5,8 +5,15 @@
 
 if [ -f $CONFDIR/ipblock.conf ]; then
  iptables -N IPBLOCK
- iptables -I INPUT 2
+ iptables -I INPUT 2 -j IPBLOCK
  for i in `cat $CONFDIR/ipblock.conf`; do
-  iptables -I INPUT -s $i -j $DROP
+  local IP=`echo $i | cut -d/ -f1`
+  local PORT=`echo $i | cut -d/ -f2`
+  local PROTO=`echo $i | cut -d/ -f3`
+  if [ ! -z $PORT ] && [ $PORT = "all" ] && [ ! -z $PROTO ]; then
+   iptables -I IPBLOCK -s $IP -p $PROTO -j $DROP
+  elif [ ! -z $PORT ] && [ ! $PORT = "all" ] && [ ! -z $PROTO ]; then
+   iptables -I IPBLOCK -s $IP -p $PROTO --sport $PORT -j $DROP
+  fi
  done
 fi
