@@ -1,6 +1,5 @@
 Add modules for handling specialised tasks:
-ip-block module, too block specified IP addresses.
-Come up with other useful module ideas.
+Brute-force defeater, using ipt_recent and rigid limiting, combine with a whitelist.
 
 Automatic iptables failchecking:
 Use a function that gathers all the arguments passed to it and sends them to

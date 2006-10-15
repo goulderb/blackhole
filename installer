@@ -24,7 +24,7 @@ fi
 case "$1" in
 slackware)
 if [ ! -d /etc/blackhole ]; then
- echo "Beginning slackware installation."
+ echo "Beginning Slackware installation."
  rcins slackware
  if [ $BASE = "ON" ]; then
   echo "Installing base.."
@@ -46,9 +46,9 @@ else
  exit 1
 fi
 ;;
-gentoo)
+generic)
 if [ ! -d /etc/blackhole ]; then
- echo "Beginning gentoo installation"
+ echo "Beginning generic installation"
  if [ $BASE = "ON" ]; then
   echo "Installing base.."
   createdirs linux
@@ -61,53 +61,7 @@ if [ ! -d /etc/blackhole ]; then
   echo "Aborting installation."
   exit 1
  fi
- applyrules
- echo "Done."
- exit 0
-else
- echo "Installer: The directory /etc/blackhole already exist, please run upgrader instead."
- exit 1
-fi
-;;
-fedora)
-if [ ! -d /etc/blackhole ]; then
- echo "Beginning fedora installation"
- if [ $BASE = "ON" ]; then
-  echo "Installing base.."
-  createdirs
-  cp config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
-  cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
-  cp modules/* $PREFIX/share/blackhole/modules/
-  cp blackhole $PREFIX/bin/blackhole
-  chmod +x $PREFIX/bin/blackhole
- else
-  echo "Aborting installation."
-  exit 1
- fi
- applyrules
- echo "Done."
- exit 0
-else
- echo "Installer: The directory /etc/blackhole already exist, please run upgrader instead."
- exit 1
-fi
-;;
-mandriva)
-if [ ! -d /etc/blackhole ]; then
- echo "Beginning mandriva installation"
- if [ $BASE = "ON" ]; then
-  echo "Installing base.."
-  createdirs
-  cp config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
-  cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
-  cp modules/* $PREFIX/share/blackhole/modules/
-  cp blackhole $PREFIX/bin/blackhole
-  chmod +x $PREFIX/bin/blackhole
- else
-  echo "Aborting installation."
-  exit 1
- fi
- applyrules
+ applyrules 
  echo "Done."
  exit 0
 else
@@ -117,7 +71,7 @@ fi
 ;;
 crux)
 if [ ! -d /etc/blackhole ]; then
- echo "Beginning slackware installation"
+ echo "Beginning CRUX installation"
  rcins crux
  if [ $BASE = "ON" ]; then
   echo "Installing base.."
@@ -147,9 +101,7 @@ echo "Usage: ./installer [OPTION]"
 echo
 echo "Options:"
 echo "slackware"
-echo "gentoo"
-echo "fedora"
-echo "mandriva"
+echo "generic"
 echo "crux"
 exit 0
 ;;

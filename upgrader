@@ -46,58 +46,12 @@ else
  exit 1
 fi
 ;;
-gentoo)
+generic)
 if [ -d /etc/blackhole ]; then
- echo "Upgrading gentoo installation"
+ echo "Upgrading generic installation"
  if [ "$BASE" = "ON" ]; then
   echo "Upgrading base.."
   createdirs $PREIFX $PREFIX
-  cp -i config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
-  cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
-  cp modules/* $PREFIX/share/blackhole/modules/
-  cp blackhole $PREFIX/bin/blackhole
-  chmod +x $PREFIX/bin/blackhole
- else
-  echo "Aborting upgrade."
-  exit 1
- fi
- applyrules
- echo "Done."
- exit 0
-else
- echo "Upgrader: The directory /etc/blackhole doesn't exist, please run installer instead."
- exit 1
-fi
-;;
-fedora)
-if [ -d /etc/blackhole ]; then
- echo "Upgrading fedora installation"
- if [ "$BASE" = "ON" ]; then
-  echo "Upgrading base.."
-  createdirs $PREIFX 
-  cp -i config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
-  cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
-  cp modules/* $PREFIX/share/blackhole/modules/
-  cp blackhole $PREFIX/bin/blackhole
-  chmod +x $PREFIX/bin/blackhole
- else
-  echo "Aborting upgrade."
-  exit 1
- fi
- applyrules
- echo "Done."
- exit 0
-else
- echo "Upgrader: The directory /etc/blackhole doesn't exist, please run installer instead."
- exit 1
-fi
-;;
-mandriva)
-if [ -d /etc/blackhole ]; then
- echo "Upgrading mandriva installation"
- if [ "$BASE" = "ON" ]; then
-  echo "Upgrading base.."
-  createdirs $PREIFX 
   cp -i config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
   cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
   cp modules/* $PREFIX/share/blackhole/modules/
@@ -147,9 +101,7 @@ echo "Usage: ./upgrader [OPTION]"
 echo
 echo "Options:"
 echo "slackware"
-echo "gentoo"
-echo "fedora"
-echo "mandriva"
+echo "generic"
 echo "crux"
 exit 0
 ;;

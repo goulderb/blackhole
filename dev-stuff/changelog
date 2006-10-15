@@ -1,3 +1,8 @@
+Version: 1.1-ARCH Commit 4
+Changes:
+Implement a "generic" install/upgrade target, this does everything that was
+done in the Fedora/Gentoo/Mandriva options, as they all duplicated each other.
+
 Version: 1.1-ARCH Commit 3
 Changes:
 Fix up some problems with rule effectiveness (filter shit before accept
