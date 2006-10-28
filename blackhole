@@ -48,9 +48,9 @@ else
 fi
 
 if [ ! -z "${MODULES[*]}" ]; then
- echo -n "Loading modules: "
+ echo "Setting iptables rules."
+ echo -n "Loading blackhole modules: "
  for i in ${MODULES[@]}; do
-  echo -n "$i "
   load_module $i
   LOADEDMODULES="$LOADEDMODULES $i"
  done

@@ -1,43 +1,35 @@
 Version: 1.1
 Changes:
-Implement a "generic" install/upgrade target, this does everything that was
-done in the Fedora/Gentoo/Mandriva options, as they all duplicated each other.
-Fix up some problems with rule effectiveness (filter shit before accept
-instead of after, which causes rules to loose effectiveness as only unaccepted
-packets will be filtered not accepted ones, this change should be put into
-effect in predatorwall).
-Fix ip-block typo and update installer/upgrader for it.
-Don't use state past the initial state match, it's pointless and unproductive.
-Includes a quick-implementation ipblock module, needs further expansion to support per-port blocking.
-Reenable dropping of fragmented packets.
-Change flood-limiting.bmod's NAME header.
+- Minor cleanup work here and there.
+- Merge previous changelog information (1.0-ARCH*) to save space.
+- Slightly changed changelog layout, prefix sections with - and indent entire
+  sections.
+- Better failure handling in load_module, if we can't load because of a
+  dependency resolving error we print "[DEPERROR]" after the module and skip,
+  if the module doesn't exist we print "[MODERROR]" after the module and skip.
+- Implement a "generic" install/upgrade target, this does everything that was
+  done in the Fedora/Gentoo/Mandriva options, as they all duplicated each other.
+- Fix up some problems with rule effectiveness (filter shit before accept
+  instead of after, which causes rules to loose effectiveness as only unaccepted
+  packets will be filtered not accepted ones, this change should be put into
+  effect in predatorwall).
+- Fix ip-block typo and update installer/upgrader for it.
+- Don't use state past the initial state match, it's pointless and unproductive.
+- Includes a quick-implementation ipblock module, needs further expansion to support per-port blocking.
+- Reenable dropping of fragmented packets.
+- Change flood-limiting.bmod's NAME header.
 
 Version: 1.0
 Changes:
-Minor clean up work in upgrader/installer.
-First official release.
-
-Version 1.0-ARCH4
-Changes:
-Let's skip documentation until 1.5/2.0, so we can get this thing published.
-Completely kill passive-ftp, it's been obsoleted by output/input-allow.
-Rename "state" too "extended options", extended options better explains the
-function of it.
-Remove the modules documentation, it wasn't very good.
-
-Version: 1.0-ARCH3
-Changes:
-Add some documentation.
-Stop using includes/* in upgrader/installer, it's not clean.
-Update the todolist, hopefully I can get to 1.0 in a month or so.
-
-Version: 1.0-ARCH2
-Changes:
-Fix up a number of problems with the initial commited code.
-Improve upgrader/installer.
-Add state support to input/output-allow.
-Clean up passive-ftp.
-
-Version: 1.0-ARCH1
-Changes:
-First bunch of code commited to the Arch mirror.
+- Minor clean up work in upgrader/installer.
+- First official release.
+- Let's skip documentation until 1.5/2.0, so we can get this thing published.
+- Completely kill passive-ftp, it's been obsoleted by output/input-allow.
+- Rename "state" too "extended options", extended options better explains the
+- function of it.
+- Remove the modules documentation, it wasn't very good.
+- Add some documentation.
+- Stop using includes/* in upgrader/installer, it's not clean.
+- Fix up a number of problems with the initial commited code.
+- Improve upgrader/installer.
+- Add state support to input/output-allow.

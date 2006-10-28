@@ -22,7 +22,7 @@ if [ $APPLY = "ON" ]; then
 else
  echo "Warning: The new rules have not been set"
  echo "If you wish to set them at a later date"
- echo "Run /usr/bin/blackhole start"
+ echo "Run $PREFIX/blackhole start"
 fi
 }
 

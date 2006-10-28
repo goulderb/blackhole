@@ -21,13 +21,15 @@ if [ ! -z $1 ] && [ -f $MODDIR/$1.bmod ]; then
    . $MODDIR/$i.bmod
    echo -n "$i "
   else
-   echo
-   echo "The module, $i, doesn't exist and is required by $1, dieing."
-   exit 1
+   echo -n "$1[DEPERROR] "
+   export DEPERROR=1
   fi
  done
- . $MODDIR/$1.bmod
+ if [ ! "$DEPERROR" = "1" ]; then
+  echo -n "$1 "
+  . $MODDIR/$1.bmod
+ fi 
 else
- echo "The module, $1, does not exist, skipping."
+ echo -n "$1[MODERROR] "
 fi
 }
