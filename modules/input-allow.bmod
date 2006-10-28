@@ -5,11 +5,13 @@
 
 if [ ! -z "${INPUT_ALLOW[*]}" ]; then
  for i in ${INPUT_ALLOW[@]}; do
+  iptables -N
   local PORT=`echo $i | cut -d/ -f1`
   local PROTO=`echo $i | cut -d/ -f2`
   if [ -f $CONFDIR/extopts.conf ]; then
    EXTOPTS=`grep $PORT/input $CONFDIR/extopts.conf | cut -d: -f2 | sed 's/\s//'`
   fi
-  iptables -I INPUT 1 -p $PROTO --dport $PORT $EXTOPTS -j ACCEPT
+  iptables -I INPUT 1 -j INPUT_ALLOW
+  iptables -I INPUT_ALLOW 1 -p $PROTO --dport $PORT $EXTOPTS -j ACCEPT
  done
 fi

@@ -1,17 +1,18 @@
 Version: 1.1
 Changes:
+- Make input/output-allow use their own tables now.
 - Minor cleanup work here and there.
 - Merge previous changelog information (1.0-ARCH*) to save space.
 - Slightly changed changelog layout, prefix sections with - and indent entire
-  sections.
+  sections. Fix old entry errors.
 - Better failure handling in load_module, if we can't load because of a
   dependency resolving error we print "[DEPERROR]" after the module and skip,
   if the module doesn't exist we print "[MODERROR]" after the module and skip.
 - Implement a "generic" install/upgrade target, this does everything that was
   done in the Fedora/Gentoo/Mandriva options, as they all duplicated each other.
-- Fix up some problems with rule effectiveness (filter shit before accept
-  instead of after, which causes rules to loose effectiveness as only unaccepted
-  packets will be filtered not accepted ones, this change should be put into
+- Fix up some problems with rule effectiveness (filter stuff before accept
+  instead of after, which causes rules to loose effectiveness as only accepted
+  packets will be filtered and not unaccepted ones, this change should be put into
   effect in predatorwall).
 - Fix ip-block typo and update installer/upgrader for it.
 - Don't use state past the initial state match, it's pointless and unproductive.
