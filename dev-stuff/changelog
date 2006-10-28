@@ -1,5 +1,6 @@
 Version: 1.1
 Changes:
+- Some assorted cleanup work.
 - Make input/output-allow use their own tables now.
 - Minor cleanup work here and there.
 - Merge previous changelog information (1.0-ARCH*) to save space.

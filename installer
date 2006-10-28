@@ -24,20 +24,14 @@ fi
 case "$1" in
 slackware)
 if [ ! -d /etc/blackhole ]; then
- echo "Beginning Slackware installation."
+ echo "Beginning Blackhole installation."
  rcins slackware
- if [ $BASE = "ON" ]; then
-  echo "Installing base.."
-  createdirs
-  cp config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
-  cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
-  cp modules/* $PREFIX/share/blackhole/modules/
-  cp blackhole $PREFIX/bin/blackhole
-  chmod +x $PREFIX/bin/blackhole
- else
-  echo "Aborting installation."
-  exit 1
- fi
+ createdirs
+ cp config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
+ cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
+ cp modules/* $PREFIX/share/blackhole/modules/
+ cp blackhole $PREFIX/bin/blackhole
+ chmod +x $PREFIX/bin/blackhole
  applyrules
  echo "Done."
  exit 0
@@ -48,19 +42,13 @@ fi
 ;;
 generic)
 if [ ! -d /etc/blackhole ]; then
- echo "Beginning generic installation"
- if [ $BASE = "ON" ]; then
-  echo "Installing base.."
-  createdirs linux
-  cp config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
-  cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
-  cp modules/* $PREFIX/share/blackhole/modules/
-  cp blackhole $PREFIX/bin/blackhole
-  chmod +x $PREFIX/bin/blackhole
- else
-  echo "Aborting installation."
-  exit 1
- fi
+ echo "Beginning Blackhole installation"
+ createdirs
+ cp config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
+ cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
+ cp modules/* $PREFIX/share/blackhole/modules/
+ cp blackhole $PREFIX/bin/blackhole
+ chmod +x $PREFIX/bin/blackhole
  applyrules 
  echo "Done."
  exit 0
@@ -73,18 +61,12 @@ crux)
 if [ ! -d /etc/blackhole ]; then
  echo "Beginning CRUX installation"
  rcins crux
- if [ $BASE = "ON" ]; then
-  echo "Installing base.."
-  createdirs
-  cp config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
-  cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
-  cp modules/* $PREFIX/share/blackhole/modules/
-  cp blackhole $PREFIX/bin/blackhole
-  chmod +x $PREFIX/bin/blackhole
- else
-  echo "Abort installation"
-  exit 1
- fi
+ createdirs
+ cp config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
+ cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
+ cp modules/* $PREFIX/share/blackhole/modules/
+ cp blackhole $PREFIX/bin/blackhole
+ chmod +x $PREFIX/bin/blackhole
  applyrules
  echo "Done"
  exit 0
@@ -101,8 +83,8 @@ echo "Usage: ./installer [OPTION]"
 echo
 echo "Options:"
 echo "slackware"
-echo "generic"
 echo "crux"
+echo "generic"
 exit 0
 ;;
 esac
