@@ -1,5 +1,5 @@
 Blackhole to do list for later versions:
+Required for 1.5/2.0: Extend bruteforce-defeat to defeat bruteforcing on other ports/protocols.
 Required for 1.5/2.0: Document blackhole and all shipped modules.
 Required for 1.5/2.0: Write an article on how to use the new input/output-allow modules.
 Highly desired for 1.5/2.0: Implement more features/modules from the idea list.
-Required for 1.2: Add brute-force defeating module.

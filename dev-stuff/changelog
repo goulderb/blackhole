@@ -1,5 +1,9 @@
 Version: 1.1
 Changes:
+- Change ip-block when used per-port to block both source and destination
+  port.
+- New module, bruteforce-defeat, that uses ipt_recent to defeat SSH
+  bruteforcing, noted future plans on extending it for other ports/protocols.
 - Some assorted cleanup work.
 - Make input/output-allow use their own tables now.
 - Minor cleanup work here and there.
