@@ -13,7 +13,7 @@ if [ -f $CONFDIR/ipblock.conf ]; then
   if [ ! -z $PORT ] && [ $PORT = "all" ] && [ ! -z $PROTO ]; then
    iptables -I IPBLOCK -s $IP -p $PROTO -j $DROP
   elif [ ! -z $PORT ] && [ ! $PORT = "all" ] && [ ! -z $PROTO ]; then
-   iptables -I IPBLOCK -s $IP -p $PROTO --sport $PORT -j $DROP
+   iptables -I IPBLOCK -s $IP -p $PROTO --sport $PORT --dport $PORT -j $DROP
   fi
  done
 fi

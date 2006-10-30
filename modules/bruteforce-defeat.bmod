@@ -1,0 +1,15 @@
+# VERSION: 0.1
+# REVISION: 0
+# NAME: bruteforce-defeat
+# REQUIRES: core
+
+iptables -N BRUTEFORCE_DEFEAT
+iptables -I INPUT 2 -p tcp --dport 22 -m state --state NEW -j BRUTEFORCE_DEFEAT
+if [ -f $CONFDIR/bruteforce-whitelist.conf ]; then
+ for i in `cat $CONFDIR/bruteforce-whitelist.conf; do
+   iptables -A BRUTEFORCE_DEFEAT -s $i -p tcp --dport 22 -j ACCEPT
+ done
+fi
+iptables -A BRUTEFORCE_DEFEAT -m recent --update --seconds 15 -j $DROP
+iptables -A BRUTEFORCE_DEFEAT -m recent --set -j ACCEPT
+
