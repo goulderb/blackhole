@@ -4,8 +4,8 @@
 # REQUIRES:
 
 if [ ! -z "${INPUT_ALLOW[*]}" ]; then
+ iptables -N INPUT_ALLOW
  for i in ${INPUT_ALLOW[@]}; do
-  iptables -N INPUT_ALLOW
   local PORT=`echo $i | cut -d/ -f1`
   local PROTO=`echo $i | cut -d/ -f2`
   if [ -f $CONFDIR/extopts.conf ]; then
