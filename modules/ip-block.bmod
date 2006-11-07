@@ -1,19 +1,19 @@
 # VERSION: 0.1
 # REVISION: 0
 # NAME: ip-block
-# REQUIRES: core
+# REQUIRES:
 
-if [ -f $CONFDIR/ipblock.conf ]; then
+if [ -f $CONFDIR/ipblock.conf ] && [ ! `cat $CONFDIR/ipblock.conf | wc -l` = 0 ]; then
  iptables -N IPBLOCK
- iptables -I INPUT 2 -j IPBLOCK
+ iptables -A INPUT -j IPBLOCK
  for i in `cat $CONFDIR/ipblock.conf`; do
   local IP=`echo $i | cut -d/ -f1`
   local PORT=`echo $i | cut -d/ -f2`
   local PROTO=`echo $i | cut -d/ -f3`
   if [ ! -z $PORT ] && [ $PORT = "all" ] && [ ! -z $PROTO ]; then
-   iptables -I IPBLOCK -s $IP -p $PROTO -j $DROP
+   iptables -A IPBLOCK -s $IP -p $PROTO -j $DROP
   elif [ ! -z $PORT ] && [ ! $PORT = "all" ] && [ ! -z $PROTO ]; then
-   iptables -I IPBLOCK -s $IP -p $PROTO --sport $PORT --dport $PORT -j $DROP
+   iptables -A IPBLOCK -s $IP -p $PROTO --sport $PORT --dport $PORT -j $DROP
   fi
  done
 fi

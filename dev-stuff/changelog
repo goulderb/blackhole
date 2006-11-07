@@ -1,5 +1,13 @@
 Version: 1.1
 Changes:
+- Massive change involving rule order and effectiveness, the order of the
+  MODULES array now MATTERS. The order of the array determines the order of
+  rules. For example, loading tcp-flag-inspection then flood-limiting causes
+  packets to be run through flag inspection first, then flood limiting. It
+  should be noted that core should ALWAYS be last, otherwise other rules will
+  override it and that would be really ugly. This is an unfortunate price to
+  pay, but this makes a properly ordered MODULES array provide much better
+  effectiveness.
 - Change ip-block when used per-port to block both source and destination
   port.
 - New module, bruteforce-defeat, that uses ipt_recent to defeat SSH

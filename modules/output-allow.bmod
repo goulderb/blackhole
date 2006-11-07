@@ -1,7 +1,7 @@
 # VERSION: 0.1
 # REVISION: 0
 # NAME: output-allow
-# REQUIRES: core
+# REQUIRES:
 
 if [ ! -z "${OUTPUT_ALLOW[*]}" ]; then
  for i in ${OUTPUT_ALLOW[@]}; do
@@ -11,7 +11,7 @@ if [ ! -z "${OUTPUT_ALLOW[*]}" ]; then
   if [ -f $CONFDIR/extopts.conf ]; then
    EXTOPTS=`grep $PORT/output $CONFDIR/extopts.conf | cut -d: -f2 | sed 's/\s//'`
   fi
-  iptables -I OUTPUT 1 -j OUTPUT_ALLOW
-  iptables -I OUTPUT_ALLOW 1 -p $PROTO --dport $PORT $EXTOPTS -j ACCEPT
+  iptables -A OUTPUT -j OUTPUT_ALLOW
+  iptables -A OUTPUT_ALLOW -p $PROTO --dport $PORT $EXTOPTS -j ACCEPT
  done
 fi
