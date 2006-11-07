@@ -8,13 +8,10 @@ Changes:
   override it and that would be really ugly. This is an unfortunate price to
   pay, but this makes a properly ordered MODULES array provide much better
   effectiveness.
-- Change ip-block when used per-port to block both source and destination
-  port.
 - New module, bruteforce-defeat, that uses ipt_recent to defeat SSH
   bruteforcing, noted future plans on extending it for other ports/protocols.
-- Some assorted cleanup work.
 - Make input/output-allow use their own tables now.
-- Minor cleanup work here and there.
+- A lot of clean up work.
 - Merge previous changelog information (1.0-ARCH*) to save space.
 - Slightly changed changelog layout, prefix sections with - and indent entire
   sections. Fix old entry errors.
@@ -27,9 +24,8 @@ Changes:
   instead of after, which causes rules to loose effectiveness as only accepted
   packets will be filtered and not unaccepted ones, this change should be put into
   effect in predatorwall).
-- Fix ip-block typo and update installer/upgrader for it.
 - Don't use state past the initial state match, it's pointless and unproductive.
-- Includes a quick-implementation ipblock module, needs further expansion to support per-port blocking.
+- New module, ip-block, provides the ability to block specific IP's.
 - Reenable dropping of fragmented packets.
 - Change flood-limiting.bmod's NAME header.
 
