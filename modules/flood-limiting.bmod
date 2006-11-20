@@ -5,7 +5,6 @@
 
 iptables -N FLOOD
 iptables -A INPUT -j FLOOD
-iptables -A FLOOD -p tcp --syn -m limit --limit 5/second --limit-burst 5 -j ACCEPT
-iptables -A FLOOD -p tcp --tcp-flags SYN,ACK,FIN,RST RST -m limit --limit 5/second --limit-burst 5 -j ACCEPT
-iptables -A FLOOD -p icmp --icmp-type echo-request -m limit --limit 5/second --limit-burst 5 -j ACCEPT
-iptables -A FLOOD -j DROP
+iptables -A FLOOD -p tcp --tcp-flags SYN,ACK,FIN,RST RST -m limit --limit 20/second --limit-burst 5 -j DROP
+iptables -A FLOOD -p icmp --icmp-type echo-request -m limit --limit 20/second --limit-burst 5 -j DROP
+iptables -A FLOOD -j RETURN
