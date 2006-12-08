@@ -1,3 +1,10 @@
+Version: 2.0-GIT
+Changes:
+- Fix issues where rules do not use $DROP, using DROP instead.
+- Fix some syntax errors in bruteforce-defeat.bmod (patch will be published
+  for 1.1)
+- Remove syn-flood prevention, this might return as a per-port module.
+
 Version: 1.1
 Changes:
 - Massive change involving rule order and effectiveness, the order of the
