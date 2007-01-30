@@ -11,5 +11,4 @@ if [ -f $CONFDIR/bruteforce-whitelist.conf ]; then
  done
 fi
 iptables -A BRUTEFORCE_DEFEAT -m recent --update --seconds 15 -j $DROP
-iptables -A BRUTEFORCE_DEFEAT -m recent --set -j ACCEPT
-
+iptables -A BRUTEFORCE_DEFEAT -m recent --set -j RETURN

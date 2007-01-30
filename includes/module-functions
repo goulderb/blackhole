@@ -20,15 +20,18 @@ if [ ! -z $1 ] && [ -f $MODDIR/$1.bmod ]; then
   elif [ -f $MODDIR/$i.bmod ]; then
    . $MODDIR/$i.bmod
    echo -n "$i "
+   export LOADEDMODULES="$LOADEDMODULES $i"
   else
    echo -n "$1[DEPERROR] "
    export DEPERROR=1
   fi
  done
- if [ ! "$DEPERROR" = "1" ]; then
+ if [ ! "$DEPERROR" = "1" ] && [ -z "`echo $LOADEDMODULES | grep $1`" ]; then
   echo -n "$1 "
   . $MODDIR/$1.bmod
- fi 
+ else
+  continue
+ fi
 else
  echo -n "$1[MODERROR] "
 fi
