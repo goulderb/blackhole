@@ -8,6 +8,5 @@ iptables -A INPUT -p tcp --dport 22 -m state --state NEW -j BRUTEFORCE_DEFEAT
 for i in ${BRUTEFORCE_WHITELIST[@]}; do
    iptables -A BRUTEFORCE_DEFEAT -s $i -p tcp --dport 22 -j RETURN
 done
-fi
 iptables -A BRUTEFORCE_DEFEAT -m recent --update --seconds 15 -j $DROP
 iptables -A BRUTEFORCE_DEFEAT -m recent --set -j RETURN
