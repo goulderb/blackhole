@@ -4,6 +4,8 @@ Changes:
 - Fix some syntax errors in bruteforce-defeat.bmod (patch will be published
   for 1.1)
 - Remove syn-flood prevention, this might return as a per-port module.
+- A new module, moblock, is included that sets up the required nfqueue's
+  for moblock. Note that the daemon must be started manually. 
 
 Version: 1.1
 Changes:
