@@ -1,55 +1,55 @@
-# includes/installation-functions: Functions used only in installation
-# Written by: predatorfreak
+#	includes/installation-functions: Functions used only in installation
+#	Written by: predatorfreak
 
 createdirs() {
-if [ ! -d /etc/blackhole/ ]; then
- mkdir -p /etc/blackhole/
-fi
-if [ ! -d $PREFIX/share/blackhole ]; then
- mkdir -p $PREFIX/share/blackhole/{includes,modules}
-else
- if [ ! -d $PREFIX/share/blackhole/includes ]; then
-  mkdir $PREFIX/share/blackhole/includes
- elif [ ! -d $PREFIX/share/blackhole/modules ]; then
-  mkdir $PREFIX/share/blackhole/modules
- fi
-fi
+	if [ ! -d /etc/blackhole/ ]; then
+		mkdir -p /etc/blackhole/
+	fi
+	if [ ! -d $PREFIX/share/blackhole ]; then
+		mkdir -p $PREFIX/share/blackhole/{includes,modules}
+	else
+		if [ ! -d $PREFIX/share/blackhole/includes ]; then
+			mkdir $PREFIX/share/blackhole/includes
+		elif [ ! -d $PREFIX/share/blackhole/modules ]; then
+			mkdir $PREFIX/share/blackhole/modules
+		fi
+	fi
 }
 
 applyrules() {
-if [ $APPLY = "ON" ]; then
- $PREFIX/bin/blackhole restart
-else
- echo "Warning: The new rules have not been set"
- echo "If you wish to set them at a later date"
- echo "Run $PREFIX/blackhole start"
-fi
+	if [ $APPLY = "ON" ]; then
+		$PREFIX/bin/blackhole restart
+	else
+		echo "Warning: The new rules have not been set"
+		echo "If you wish to set them at a later date"
+		echo "Run $PREFIX/blackhole start"
+	fi
 }
 
-rcins() {
-if [ "$RCINS" = "ON" ] && [ ! -z $1 ]; then
- case "$1" in
- slackware)
- if [ -z "`grep rc.firewall /etc/rc.d/rc.local`" ]; then
-  ln -sf $PREFIX/bin/blackhole /etc/rc.d/rc.firewall
-  echo "/etc/rc.d/rc.firewall start" >> /etc/rc.d/rc.local
- else
-  echo "rc.firewall is referenced in rc.local, please edit rc.local"
-  echo "by hand, adding the line /etc/rc.d/rc.firewall start"
-  ln -sf $PREFIX/bin/blackhole /etc/rc.d/rc.firewall
- fi
- ;;
- crux)
- ln -sf $PREFIX/bin/blackhole /etc/rc.d/blackhole
- echo "Please add blackhole to the startup array in /etc/rc.conf"
- ;;
- *)
- echo "Usage: rcins [OPTION]"
- echo
- echo "Options:"
- echo "slackware"
- echo "crux"
- ;;
- esac
-fi
+rcins()	{
+	if [ "$RCINS" = "ON" ] && [ ! -z $1 ]; then
+		case "$1" in
+		slackware)
+		if [ -z "`grep rc.firewall /etc/rc.d/rc.local`" ]; then
+			ln -sf $PREFIX/bin/blackhole /etc/rc.d/rc.firewall
+			echo "/etc/rc.d/rc.firewall start" >> /etc/rc.d/rc.local
+		else
+			echo "rc.firewall is referenced in rc.local, please edit rc.local"
+			echo "by hand, adding the line /etc/rc.d/rc.firewall start"
+			ln -sf $PREFIX/bin/blackhole /etc/rc.d/rc.firewall
+		fi
+		;;
+		crux)
+			ln -sf $PREFIX/bin/blackhole /etc/rc.d/blackhole
+			echo "Please add blackhole to the startup array in /etc/rc.conf"
+		;;
+		*)
+			echo "Usage: rcins [OPTION]"
+			echo
+			echo "Options:"
+			echo "slackware"
+			echo "crux"
+		;;
+		esac
+	fi
 }

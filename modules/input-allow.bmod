@@ -1,17 +1,17 @@
-# VERSION: 1.1
-# REVISION: 0
-# NAME: input-allow
-# REQUIRES:
+#	VERSION: 1.1
+#	REVISION: 0
+#	NAME: input-allow
+#	REQUIRES:
 
-if [ ! -z "${INPUT_ALLOW[*]}" ]; then
- iptables -N INPUT_ALLOW
- iptables -A INPUT -j INPUT_ALLOW
- for i in ${INPUT_ALLOW[@]}; do
-  local PORT=`echo $i | cut -d/ -f1`
-  local PROTO=`echo $i | cut -d/ -f2`
-  if [ -f $CONFDIR/extopts.conf ]; then
-   EXTOPTS=`grep $PORT/input $CONFDIR/extopts.conf | cut -d: -f2 | sed 's/\s//'`
-  fi
-  iptables -A INPUT_ALLOW -p $PROTO --dport $PORT $EXTOPTS -j ACCEPT
- done
+if [ -n "${INPUT_ALLOW[*]}" ]; then
+	iptables -N INPUT_ALLOW
+	iptables -A INPUT -j INPUT_ALLOW
+	for i in ${INPUT_ALLOW[@]}; do
+		local PORT=`echo $i | cut -d/ -f1`
+		local PROTO=`echo $i | cut -d/ -f2`
+		if [ -f $CONFDIR/extopts.conf ]; then
+		 EXTOPTS=`grep $PORT/input $CONFDIR/extopts.conf | cut -d: -f2 | sed 's/\s//'`
+		fi
+		iptables -A INPUT_ALLOW -p $PROTO --dport $PORT $EXTOPTS -j ACCEPT
+	done
 fi

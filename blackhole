@@ -1,72 +1,72 @@
-#!/usr/bin/env bash
-# Written by: predatorfreak
+#!/usr/bin/env	bash
+#	Written by: predatorfreak
 
-# Environment checks.
+#	Environment checks.
 if [ ! `whoami` = "root" ]; then
- echo "Blackhole requires root privilages to modify iptables rules."
- exit 1
+	echo "Blackhole requires root privilages to modify iptables rules."
+	exit 1
 fi
 
 if [ -f /etc/blackhole/blackhole.conf ]; then
- . /etc/blackhole/blackhole.conf
- export CONFDIR=/etc/blackhole
+	. /etc/blackhole/blackhole.conf
+	export CONFDIR=/etc/blackhole
 elif [ -f $PWD/config/blackhole.conf ]; then
- . $PWD/config/blackhole.conf
- export CONFDIR=$PWD/config
+	. $PWD/config/blackhole.conf
+	export CONFDIR=$PWD/config
 else
- echo "Couldn't find configuration file, dieing."
- exit 1
+	echo "Couldn't find configuration file, dieing."
+	exit 1
 fi
 
-if [ -d $PREFIX/share/blackhole/modules ] && [ -f $PREFIX/share/blackhole/modules/core.bmod ]; then
- MODDIR=$PREFIX/share/blackhole/modules
-elif [ -d $PWD/modules ] && [ -f $PWD/modules/core.bmod ]; then
- MODDIR=$PWD/modules
+if [ -d $PREFIX/share/blackhole/modules -a -f $PREFIX/share/blackhole/modules/core.bmod ]; then
+	MODDIR=$PREFIX/share/blackhole/modules
+elif [ -d $PWD/modules -a -f $PWD/modules/core.bmod ]; then
+	MODDIR=$PWD/modules
 else
- echo "Modules directory doesn't exist, dieing."
- exit 1
+	echo "Modules directory doesn't exist, dieing."
+	exit 1
 fi
 
 if [ -f $PREFIX/share/blackhole/includes/module-functions ]; then
- . $PREFIX/share/blackhole/includes/module-functions
+	. $PREFIX/share/blackhole/includes/module-functions
 elif [ -f $PWD/includes/module-functions ]; then
- . $PWD/includes/module-functions
+	. $PWD/includes/module-functions
 else
- echo "Couldn't find the requried includes, dieing."
- exit 1
+	echo "Couldn't find the requried includes, dieing."
+	exit 1
 fi
 
 case "$1" in
 start)
-if [ $LOG_DROPPED_PACKETS = "YES" ]; then
- iptables -N LOG_DROP
- iptables -A LOG_DROP -j LOG --log-tcp-options --log-ip-options --log-prefix $LOGPREFIX
- iptables -A LOG_DROP -j DROP
- export DROP=LOG_DROP
-else
- export DROP=DROP
-fi
+	if [ $LOG_DROPPED_PACKETS = "YES" ]; then
+		iptables -N LOG_DROP
+		iptables -A LOG_DROP -j LOG --log-tcp-options --log-ip-options --log-prefix $LOGPREFIX
+		iptables -A LOG_DROP -j DROP
+		export DROP=LOG_DROP
+	else
+		export DROP=DROP
+	fi
 
-if [ ! -z "${MODULES[*]}" ]; then
- echo "Setting iptables rules."
- echo -n "Loading blackhole modules: "
- for i in ${MODULES[@]}; do
-  load_module $i
-  LOADEDMODULES="$LOADEDMODULES $i"
- done
- echo
-fi
+	if [ -n "${MODULES[*]}" ]; then
+		echo "Setting iptables rules."
+		echo -n "Loading blackhole modules: "
+		for i in ${MODULES[@]}; do
+		 load_module $i
+		 LOADEDMODULES="$LOADEDMODULES $i"
+		done
+		echo
+	fi
 ;;
 stop)
-iptables -F
-iptables -P INPUT ACCEPT
-iptables -P FORWARD ACCEPT
-iptables -P OUTPUT ACCEPT
-iptables -X
+	iptables -F
+	iptables -P INPUT ACCEPT
+	iptables -P FORWARD ACCEPT
+	iptables -P OUTPUT ACCEPT
+	iptables -X
 ;;
 restart)
-$0 stop
-sleep 2
-$0 start
+	$0 stop
+	sleep 2
+	$0 start
 ;;
 esac

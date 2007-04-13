@@ -1,90 +1,90 @@
 #!/bin/sh
-# installer
-# Written by: predatorfreak
+#	installer
+#	Written by: predatorfreak
 
 if [ ! `whoami` = "root" ]; then
- echo "You must be root in order to install blackhole."
- exit 1
+	echo "You must be root in order to install blackhole."
+	exit 1
 fi
 
 if [ -f $PWD/config/installation.conf ] && [ -f $PWD/config/blackhole.conf ]; then
- if [ -f $PWD/includes/installation-functions ]; then
-  . $PWD/config/installation.conf
-  . $PWD/config/blackhole.conf
-  . $PWD/includes/installation-functions
- else
-  echo "Unable to load the required functions."
-  exit 1
- fi
+	if [ -f $PWD/includes/installation-functions ]; then
+		. $PWD/config/installation.conf
+		. $PWD/config/blackhole.conf
+		. $PWD/includes/installation-functions
+	else
+		echo "Unable to load the required functions."
+		exit 1
+	fi
 else
- echo "Unable to load the configuration file."
- exit 1
+	echo "Unable to load the configuration file."
+	exit 1
 fi
 
 case "$1" in
 slackware)
-if [ ! -d /etc/blackhole ]; then
- echo "Beginning Blackhole installation."
- rcins slackware
- createdirs
- cp config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
- cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
- cp modules/* $PREFIX/share/blackhole/modules/
- cp blackhole $PREFIX/bin/blackhole
- chmod +x $PREFIX/bin/blackhole
- applyrules
- echo "Done."
- exit 0
-else
- echo "Installer: The directory /etc/blackhole already exist, please run upgrader instead."
- exit 1
-fi
+	if [ ! -d /etc/blackhole ]; then
+		echo "Beginning Blackhole installation."
+		rcins slackware
+		createdirs
+		cp config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
+		cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
+		cp modules/* $PREFIX/share/blackhole/modules/
+		cp blackhole $PREFIX/bin/blackhole
+		chmod +x $PREFIX/bin/blackhole
+		applyrules
+		echo "Done."
+		exit 0
+	else
+		echo "Installer: The directory /etc/blackhole already exist, please run upgrader instead."
+		exit 1
+	fi
 ;;
 generic)
-if [ ! -d /etc/blackhole ]; then
- echo "Beginning Blackhole installation"
- createdirs
- cp config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
- cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
- cp modules/* $PREFIX/share/blackhole/modules/
- cp blackhole $PREFIX/bin/blackhole
- chmod +x $PREFIX/bin/blackhole
- applyrules 
- echo "Done."
- exit 0
-else
- echo "Installer: The directory /etc/blackhole already exist, please run upgrader instead."
- exit 1
-fi
+	if [ ! -d /etc/blackhole ]; then
+		echo "Beginning Blackhole installation"
+		createdirs
+		cp config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
+		cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
+		cp modules/* $PREFIX/share/blackhole/modules/
+		cp blackhole $PREFIX/bin/blackhole
+		chmod +x $PREFIX/bin/blackhole
+		applyrules 
+		echo "Done."
+		exit 0
+	else
+		echo "Installer: The directory /etc/blackhole already exist, please run upgrader instead."
+		exit 1
+	fi
 ;;
 crux)
-if [ ! -d /etc/blackhole ]; then
- echo "Beginning CRUX installation"
- rcins crux
- createdirs
- cp config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
- cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
- cp modules/* $PREFIX/share/blackhole/modules/
- cp blackhole $PREFIX/bin/blackhole
- chmod +x $PREFIX/bin/blackhole
- applyrules
- echo "Done"
- exit 0
-else
- echo "Installer: The directory /etc/blackhole already exist, please run upgrader instead."
- exit 1
-fi
+	if [ ! -d /etc/blackhole ]; then
+		echo "Beginning CRUX installation"
+		rcins crux
+		createdirs
+		cp config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
+		cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
+		cp modules/* $PREFIX/share/blackhole/modules/
+		cp blackhole $PREFIX/bin/blackhole
+		chmod +x $PREFIX/bin/blackhole
+		applyrules
+		echo "Done"
+		exit 0
+	else
+		echo "Installer: The directory /etc/blackhole already exist, please run upgrader instead."
+		exit 1
+	fi
 ;;
 *)
-echo "installer -"
-echo "A streamlined installation system for blackhole"
-echo
-echo "Usage: ./installer [OPTION]"
-echo
-echo "Options:"
-echo "slackware"
-echo "crux"
-echo "generic"
-exit 0
+	echo "installer -"
+	echo "A streamlined installation system for blackhole"
+	echo
+	echo "Usage: ./installer [OPTION]"
+	echo
+	echo "Options:"
+	echo "slackware"
+	echo "crux"
+	echo "generic"
+	exit 0
 ;;
 esac

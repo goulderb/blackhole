@@ -1,19 +1,19 @@
-# VERSION: 1.1
-# REVISION: 0
-# NAME: ip-block
-# REQUIRES:
+#	VERSION: 1.1
+#	REVISION: 0
+#	NAME: ip-block
+#	REQUIRES:
 
 if [ -f $CONFDIR/ipblock.conf ] && [ ! `cat $CONFDIR/ipblock.conf | wc -l` = 0 ]; then
- iptables -N IPBLOCK
- iptables -A INPUT -j IPBLOCK
- for i in `cat $CONFDIR/ipblock.conf`; do
-  local IP=`echo $i | cut -d/ -f1`
-  local PORT=`echo $i | cut -d/ -f2`
-  local PROTO=`echo $i | cut -d/ -f3`
-  if [ ! -z $PORT ] && [ $PORT = "all" ] && [ ! -z $PROTO ]; then
-   iptables -A IPBLOCK -s $IP -p $PROTO -j $DROP
-  elif [ ! -z $PORT ] && [ ! $PORT = "all" ] && [ ! -z $PROTO ]; then
-   iptables -A IPBLOCK -s $IP -p $PROTO --sport $PORT --dport $PORT -j $DROP
-  fi
- done
+	iptables -N IPBLOCK
+	iptables -A INPUT -j IPBLOCK
+	for i in `cat $CONFDIR/ipblock.conf`; do
+		local IP=`echo $i | cut -d/ -f1`
+		local PORT=`echo $i | cut -d/ -f2`
+		local PROTO=`echo $i | cut -d/ -f3`
+		if [ -n $PORT ] && [ $PORT = "all" ] && [ -n $PROTO ]; then
+		 iptables -A IPBLOCK -s $IP -p $PROTO -j $DROP
+		elif [ -n $PORT ] && [ ! $PORT = "all" ] && [ -n $PROTO ]; then
+		 iptables -A IPBLOCK -s $IP -p $PROTO --sport $PORT --dport $PORT -j $DROP
+		fi
+	done
 fi

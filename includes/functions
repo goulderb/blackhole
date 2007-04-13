@@ -1,18 +1,18 @@
-# functions
-# Written by: predatorfreak
+#	functions
+#	Written by: predatorfreak
 
-failcheck() {
+failcheck()	{
 if [ $? = "1" ]; then
- echo "Program exited with an error, exiting."
- exit 1
+	echo "Program exited with an error, exiting."
+	exit 1
 elif [ $? = "2" ]; then
- echo "Program exited with status 2, exiting."
- exit 1
+	echo "Program exited with status 2, exiting."
+	exit 1
 elif [ $? = "130" ]; then
- echo "Program terminated by signal 2"
- exit 1
+	echo "Program terminated by signal 2"
+	exit 1
 elif [ $? = "137" ]; then
- echo "Program terminated by signal 9"
- exit 1
+	echo "Program terminated by signal 9"
+	exit 1
 fi
 }
