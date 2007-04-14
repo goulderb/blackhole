@@ -7,7 +7,7 @@ if [ ! `whoami` = "root" ]; then
 	exit 1
 fi
 
-if [ -f $PWD/config/installation.conf ] && [ -f $PWD/config/blackhole.conf ]; then
+if [ -f $PWD/config/installation.conf -a -f $PWD/config/blackhole.conf ]; then
 	if [ -f $PWD/includes/installation-functions ]; then
 		. $PWD/config/installation.conf
 		. $PWD/config/blackhole.conf

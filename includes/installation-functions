@@ -27,7 +27,7 @@ applyrules() {
 }
 
 rcins()	{
-	if [ "$RCINS" = "ON" ] && [ ! -z $1 ]; then
+	if [ "$RCINS" = "ON" -a -n $1 ]; then
 		case "$1" in
 		slackware)
 		if [ -z "`grep rc.firewall /etc/rc.d/rc.local`" ]; then
