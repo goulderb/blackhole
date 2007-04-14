@@ -1,6 +1,6 @@
-#!/bin/sh
-#	upgrader
-#	Written by: predatorfreak
+#!/bin/bash
+# upgrader
+# Written by: predatorfreak
 
 if [ ! `whoami` = "root" ]; then
 	echo "You must be root in order to upgrade blackhole."

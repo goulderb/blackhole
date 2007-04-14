@@ -1,7 +1,7 @@
-#	VERSION: 1.1
-#	REVISION: 0
-#	NAME: input-allow
-#	REQUIRES:
+# VERSION: 1.1
+# REVISION: 0
+# NAME: input-allow
+# REQUIRES:
 
 if [ -n "${INPUT_ALLOW[*]}" ]; then
 	iptables -N INPUT_ALLOW

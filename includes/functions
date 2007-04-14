@@ -1,5 +1,5 @@
-#	functions
-#	Written by: predatorfreak
+# functions
+# Written by: predatorfreak
 
 failcheck()	{
 if [ $? = "1" ]; then

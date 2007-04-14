@@ -1,5 +1,5 @@
-#	includes/installation-functions: Functions used only in installation
-#	Written by: predatorfreak
+# includes/installation-functions: Functions used only in installation
+# Written by: predatorfreak
 
 createdirs() {
 	if [ ! -d /etc/blackhole/ ]; then

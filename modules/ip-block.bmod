@@ -1,7 +1,7 @@
-#	VERSION: 1.1
-#	REVISION: 0
-#	NAME: ip-block
-#	REQUIRES:
+# VERSION: 1.1
+# REVISION: 0
+# NAME: ip-block
+# REQUIRES:
 
 if [ -f $CONFDIR/ipblock.conf -a ! `cat $CONFDIR/ipblock.conf | wc -l` = 0 ]; then
 	iptables -N IPBLOCK

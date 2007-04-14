@@ -1,6 +1,6 @@
-#!/bin/sh
-#	installer
-#	Written by: predatorfreak
+#!/bin/bash
+# installer
+# Written by: predatorfreak
 
 if [ ! `whoami` = "root" ]; then
 	echo "You must be root in order to install blackhole."

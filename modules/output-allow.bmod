@@ -1,7 +1,7 @@
-#	VERSION: 1.1
-#	REVISION: 0
-#	NAME: output-allow
-#	REQUIRES:
+# VERSION: 1.1
+# REVISION: 0
+# NAME: output-allow
+# REQUIRES:
 
 if [ -n "${OUTPUT_ALLOW[*]}" ]; then
 	iptables -N OUTPUT_ALLOW

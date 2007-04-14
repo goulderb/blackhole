@@ -1,7 +1,7 @@
-#!/usr/bin/env	bash
-#	Written by: predatorfreak
+#!/usr/bin/env bash
+# Written by: predatorfreak
 
-#	Environment checks.
+# Environment checks.
 if [ ! `whoami` = "root" ]; then
 	echo "Blackhole requires root privilages to modify iptables rules."
 	exit 1
