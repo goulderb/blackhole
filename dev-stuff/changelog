@@ -6,6 +6,8 @@ Changes:
 - Remove syn-flood prevention, this might return as a per-port module.
 - A new module, moblock, is included that sets up the required nfqueue's
   for moblock. Note that the daemon must be started manually. 
+- Various micro optimisations and cleanups.
+- Use tabs, not spaces.
 
 Version: 1.1
 Changes:

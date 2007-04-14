@@ -3,10 +3,17 @@
 # NAME: bruteforce-defeat
 # REQUIRES:
 
-iptables -N BRUTEFORCE_DEFEAT
-iptables -A INPUT -p tcp --dport 22 -m state --state NEW -j BRUTEFORCE_DEFEAT
-for i in ${BRUTEFORCE_WHITELIST[@]}; do
-	iptables -A BRUTEFORCE_DEFEAT -s $i -p tcp --dport 22 -j RETURN
-done
-iptables -A BRUTEFORCE_DEFEAT -m recent --update --seconds 15 -j $DROP
-iptables -A BRUTEFORCE_DEFEAT -m recent --set -j RETURN
+if [ -n "${BRUTEFORCE_DEFEAT[*]}" ]; then
+	iptables -N BRUTEFORCE_DEFEAT
+	iptables -A INPUT -j BRUTEFORCE_DEFEAT
+	for i in ${BRUTEFORCE_DEFEAT[@]}; do
+		local PORT=`echo $i | cut -d/ -f1`
+		local PROTO=`echo $i | cut -d/ -f2`
+		iptables -A INPUT -p $PROTO --dport $PORT -m state --state NEW -j BRUTEFORCE_DEFEAT
+	done
+	for i in ${BRUTEFORCE_WHITELIST[@]}; do
+		iptables -A BRUTEFORCE_DEFEAT -s $i -j RETURN
+	done
+	iptables -A BRUTEFORCE_DEFEAT -m recent --update --seconds 15 -j $DROP
+	iptables -A BRUTEFORCE_DEFEAT -m recent --set -j RETURN
+fi
