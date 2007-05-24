@@ -1,0 +1,25 @@
+Documentation: Blackhole Design, Modules.
+Written by: Brett 'predatorfreak' Goulder.
+
+Section 1: What is a module in Blackhole?
+In essence, a module in Blackhole is a file that contains shell-script intended to be executed in a linear fashion. Modules are freeform and can be written in anyway the
+author pleases, so long as it doesn't conflict with other modules or the core code it's self.
+
+Section 2: How does a module work in Blackhole?
+Figure 1.
+Blackhole start -> Include config/headers -> Setup logging-related variables -> Enter main loop -> Load module a, b, c, d, e, f, g -> Exit main loop -> Done
+
+The above figure visually breaks down what happens when a user runs blackhole start, the points of interest for modules are Enter main loop through Exit main loop.
+Upon entering the main loop, each module name is passed to load_module, which parses the headers, loads any required depends and assuming no errors occurs, loads the module.
+Each file is loaded into the main loop and runs, then the next module specified in MODULES is loaded and run. This is a linear process, each being loaded and run one-after-another
+according to the order of the MODULES array.
+
+Section 3: What kind of restrictions apply to Blackhole modules?
+Almost none, besides requiring that the headers be present (even if nothing is specified after :) and ensuring that nothing overwrites the others variables or leaves variables
+behind. To prevent that, please make sure you unset any variables you export that are used internally unless they are explicitly intended for other modules.
+
+Section 4: The MODULES array and why order matters.
+The MODULES array is a list of all the different modules a user wishes to load, it is executed in a linear fashion from the first listed module to the last, making order important
+to the effectiveness of rules. For example, if flood-limiting is loaded after ip-block, then blacklisted IPs will be blocked first and then flood limiting will take place. Because of this, the order is extremely important in achieving maximum effectiveness and you should alert users as to where the module should go in the MODULES array.
+
+I decided on a linear execution model because the first module I used lacked true rule effectiveness, becoming a bloody mess in certain conditions. Linear execution requires that the user know what each module does, thus allowing them to understand how to get the optimum effectiveness from it, so it is recommended that you supply documentation on what exactly it does and what kind of information it expects to get.
