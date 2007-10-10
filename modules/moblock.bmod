@@ -6,14 +6,14 @@
 iptables -N MOBLOCK_IN
 iptables -N MOBLOCK_OUT
 iptables -A INPUT -p all -m state --state NEW -j MOBLOCK_IN
-for i in ${MOBLOCK_WHITELIST_IN[@]}; do
+for i in ${IPBLOCK_WHITELIST_IN[@]}; do
 	local PORT=`echo $i | cut -d/ -f1`
 	local PROTO=`echo $i | cut -d/ -f2`
 	iptables -A MOBLOCK_IN -p $PROTO --dport $PORT $EXTOPTS -j RETURN
 done
 iptables -A MOBLOCK_IN -p all -j NFQUEUE
 iptables -A OUTPUT -p all -m state --state NEW -j MOBLOCK_OUT
-for i in ${MOBLOCK_WHITELIST_OUT[@]}; do
+for i in ${IPBLOCK_WHITELIST_OUT[@]}; do
 	local PORT=`echo $i | cut -d/ -f1`
 	local PROTO=`echo $i | cut -d/ -f2`
 	iptables -A MOBLOCK_OUT -p $PROTO --dport $PORT $EXTOPTS -j RETURN

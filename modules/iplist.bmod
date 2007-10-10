@@ -1,0 +1,23 @@
+# VERSION: 1.0
+# REVISION: 0
+# NAME: iplist
+# REQUIRES:
+
+iptables -N IPLIST_IN
+iptables -N IPLIST_OUT
+iptables -A INPUT -p all -m state --state NEW -j IPLIST_IN
+for i in ${IPBLOCK_WHITELIST_IN[@]}; do
+	local PORT=`echo $i | cut -d/ -f1`
+	local PROTO=`echo $i | cut -d/ -f2`
+	iptables -A MOBLOCK_IN -p $PROTO --dport $PORT $EXTOPTS -j RETURN
+done
+iptables -A IPLIST_IN -p all -m mark --mark 2 -j DROP
+iptables -A IPLIST_IN -p all -m mark ! --mark 1 -j NFQUEUE
+iptables -A OUTPUT -p all -m state --state NEW -j IPLIST_OUT
+for i in ${IPBLOCK_WHITELIST_OUT[@]}; do
+	local PORT=`echo $i | cut -d/ -f1`
+	local PROTO=`echo $i | cut -d/ -f2`
+	iptables -A IPLIST_OUT -p $PROTO --dport $PORT $EXTOPTS -j RETURN
+done
+iptables -A IPLIST_OUT -p all -m mark --mark 2 -j DROP
+iptables -A IPLIST_OUT -p all -m mark ! --mark 1 -j NFQUEUE
