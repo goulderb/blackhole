@@ -5,18 +5,18 @@
 
 iptables -N IPLIST_IN
 iptables -N IPLIST_OUT
-iptables -A INPUT -p all -m state --state NEW,ESTABLISHED,RELATED -j IPLIST_IN
+iptables -A INPUT -p all -m state --state NEW -j IPLIST_IN
 if [ -n "$IPBLOCK_ALLOW_OUTBOUND_PING" ]; then
 	iptables -A IPLIST_IN -p icmp --icmp-type 0 -m state --state ESTABLISHED,RELATED -j RETURN
 fi
 for i in ${IPBLOCK_WHITELIST_IN[@]}; do
 	local PORT=`echo $i | cut -d/ -f1`
 	local PROTO=`echo $i | cut -d/ -f2`
-	iptables -A MOBLOCK_IN -p $PROTO --dport $PORT $EXTOPTS -j RETURN
+	iptables -A IPLIST_IN -p $PROTO --dport $PORT $EXTOPTS -j RETURN
 done
 iptables -A IPLIST_IN -p all -m mark --mark 2 -j $DROP
 iptables -A IPLIST_IN -p all -m mark ! --mark 1 -j NFQUEUE
-iptables -A OUTPUT -p all -m state --state NEW,ESTABLISHED,RELATED -j IPLIST_OUT
+iptables -A OUTPUT -p all -m state --state NEW -j IPLIST_OUT
 if [ -n "$IPBLOCK_ALLOW_OUTBOUND_PING" ]; then
 	iptables -A IPLIST_OUT -p icmp --icmp-type 8 -m state --state NEW,ESTABLISHED,RELATED -j RETURN
 fi
