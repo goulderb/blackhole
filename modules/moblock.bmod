@@ -5,10 +5,9 @@
 
 iptables -N MOBLOCK_IN
 iptables -N MOBLOCK_OUT
-if [ -n "$IPBLOCK_ALLOW_PING" ]; then
-	iptables -A INPUT ! -p icmp -m state --state NEW -j MOBLOCK_IN
-else
-	iptables -A INPUT -p all -m state --state NEW -j MOBLOCK_IN
+iptables -A INPUT -p all -m state --state NEW,ESTABLISHED,RELATED -j MOBLOCK_IN
+if [ -n "$IPBLOCK_ALLOW_OUTBOUND_PING" ]; then
+	iptables -A MOBLOCK_IN -p icmp --icmp-type 0 -m state --state ESTABLISHED,RELATED -j RETURN
 fi
 for i in ${IPBLOCK_WHITELIST_IN[@]}; do
 	local PORT=`echo $i | cut -d/ -f1`
@@ -16,10 +15,9 @@ for i in ${IPBLOCK_WHITELIST_IN[@]}; do
 	iptables -A MOBLOCK_IN -p $PROTO --dport $PORT $EXTOPTS -j RETURN
 done
 iptables -A MOBLOCK_IN -p all -j NFQUEUE
-if [ -n "$IPBLOCK_ALLOW_PING" ]; then
-	iptables -A OUTPUT ! -p icmp -m state --state NEW -j MOBLOCK_OUT
-else
-	iptables -A OUTPUT -p all -m state --state NEW -j MOBLOCK_OUT
+iptables -A OUTPUT -p all -m state --state NEW,ESTABLISHED,RELATED -j MOBLOCK_OUT
+if [ -n "$IPBLOCK_ALLOW_OUTBOUND_PING" ]; then
+	iptables -A MOBLOCK_OUT -p icmp --icmp-type 8 -m state --state NEW,ESTABLISHED,RELATED -j RETURN
 fi
 for i in ${IPBLOCK_WHITELIST_OUT[@]}; do
 	local PORT=`echo $i | cut -d/ -f1`
