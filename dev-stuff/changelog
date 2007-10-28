@@ -5,7 +5,9 @@ Changes:
   for 1.1)
 - Remove syn-flood prevention, this might return as a per-port module.
 - A new module, moblock, is included that sets up the required nfqueue's
-  for moblock. Note that the daemon must be started manually. 
+  for moblock. Note that the daemon must be started manually.
+- A new module, iplist, is included that provides similar functionality as
+  moblock module, but without the pitfalls of moblock.
 - Various micro optimisations and cleanups.
 - Use tabs, not spaces.
 

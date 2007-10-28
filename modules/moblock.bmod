@@ -5,14 +5,22 @@
 
 iptables -N MOBLOCK_IN
 iptables -N MOBLOCK_OUT
-iptables -A INPUT -p all -m state --state NEW -j MOBLOCK_IN
+if [ -n "$IPBLOCK_ALLOW_PING" ]; then
+	iptables -A INPUT ! -p icmp -m state --state NEW -j MOBLOCK_IN
+else
+	iptables -A INPUT -p all -m state --state NEW -j MOBLOCK_IN
+fi
 for i in ${IPBLOCK_WHITELIST_IN[@]}; do
 	local PORT=`echo $i | cut -d/ -f1`
 	local PROTO=`echo $i | cut -d/ -f2`
 	iptables -A MOBLOCK_IN -p $PROTO --dport $PORT $EXTOPTS -j RETURN
 done
 iptables -A MOBLOCK_IN -p all -j NFQUEUE
-iptables -A OUTPUT -p all -m state --state NEW -j MOBLOCK_OUT
+if [ -n "$IPBLOCK_ALLOW_PING" ]; then
+	iptables -A OUTPUT ! -p icmp -m state --state NEW -j MOBLOCK_OUT
+else
+	iptables -A OUTPUT -p all -m state --state NEW -j MOBLOCK_OUT
+fi
 for i in ${IPBLOCK_WHITELIST_OUT[@]}; do
 	local PORT=`echo $i | cut -d/ -f1`
 	local PROTO=`echo $i | cut -d/ -f2`
