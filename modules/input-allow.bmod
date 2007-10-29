@@ -10,7 +10,7 @@ if [ -n "${INPUT_ALLOW[*]}" ]; then
 		local PORT=`echo $i | cut -d/ -f1`
 		local PROTO=`echo $i | cut -d/ -f2`
 		if [ -f $CONFDIR/extopts.conf ]; then
-		 EXTOPTS=`grep $PORT/input $CONFDIR/extopts.conf | cut -d: -f2 | sed 's/\s//'`
+		 EXTOPTS="`grep $PORT/input $CONFDIR/extopts.conf | cut -d: -f2 | sed 's/\s//'`"
 		fi
 		iptables -A INPUT_ALLOW -p $PROTO --dport $PORT $EXTOPTS -j ACCEPT
 	done

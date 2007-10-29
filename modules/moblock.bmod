@@ -5,23 +5,29 @@
 
 iptables -N MOBLOCK_IN
 iptables -N MOBLOCK_OUT
-iptables -A INPUT -p all -m state --state NEW,ESTABLISHED,RELATED -j MOBLOCK_IN
+iptables -A INPUT -p all -m state --state NEW -j MOBLOCK_IN
 if [ -n "$IPBLOCK_ALLOW_OUTBOUND_PING" ]; then
-	iptables -A MOBLOCK_IN -p icmp --icmp-type 0 -m state --state ESTABLISHED,RELATED -j RETURN
+	iptables -A MOBLOCK_IN -p icmp --icmp-type 0 -j RETURN
 fi
 for i in ${IPBLOCK_WHITELIST_IN[@]}; do
 	local PORT=`echo $i | cut -d/ -f1`
 	local PROTO=`echo $i | cut -d/ -f2`
+	if [ -f $CONFDIR/extopts.conf ]; then
+		EXTOPTS="`grep $PORT/input $CONFDIR/extopts.conf | cut -d: -f2 | sed 's/\s//'`"
+	fi
 	iptables -A MOBLOCK_IN -p $PROTO --dport $PORT $EXTOPTS -j RETURN
 done
 iptables -A MOBLOCK_IN -p all -j NFQUEUE
-iptables -A OUTPUT -p all -m state --state NEW,ESTABLISHED,RELATED -j MOBLOCK_OUT
+iptables -A OUTPUT -p all -m state --state NEW -j MOBLOCK_OUT
 if [ -n "$IPBLOCK_ALLOW_OUTBOUND_PING" ]; then
-	iptables -A MOBLOCK_OUT -p icmp --icmp-type 8 -m state --state NEW,ESTABLISHED,RELATED -j RETURN
+	iptables -A MOBLOCK_OUT -p icmp --icmp-type 8 -j RETURN
 fi
 for i in ${IPBLOCK_WHITELIST_OUT[@]}; do
 	local PORT=`echo $i | cut -d/ -f1`
 	local PROTO=`echo $i | cut -d/ -f2`
+	if [ -f $CONFDIR/extopts.conf ]; then
+		EXTOPTS="`grep $PORT/input $CONFDIR/extopts.conf | cut -d: -f2 | sed 's/\s//'`"
+	fi
 	iptables -A MOBLOCK_OUT -p $PROTO --dport $PORT $EXTOPTS -j RETURN
 done
 iptables -A MOBLOCK_OUT -p all -j NFQUEUE
