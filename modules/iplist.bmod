@@ -19,7 +19,7 @@ for i in ${IPBLOCK_WHITELIST_IN[@]}; do
 done
 iptables -A IPLIST_IN -p all -m mark --mark 2 -j $DROP
 iptables -A IPLIST_IN -p all -m mark ! --mark 1 -j NFQUEUE
-iptables -A OUTPUT -p all -m state --state NEW -j IPLIST_OUT
+iptables -A OUTPUT -p all -m state --state NEW,ESTABLISHED,RELATED -j IPLIST_OUT
 if [ -n "$IPBLOCK_ALLOW_OUTBOUND_PING" ]; then
 	iptables -A IPLIST_OUT -p icmp --icmp-type 8 -j RETURN
 fi
@@ -31,5 +31,28 @@ for i in ${IPBLOCK_WHITELIST_OUT[@]}; do
 	fi
 	iptables -A IPLIST_OUT -p $PROTO --dport $PORT $EXTOPTS -j RETURN
 done
+# FTP has special annoyances which make it so we have to work with it, all this crap makes dealing with it a lot easier.
+if [ -n "$IPBLOCK_ALLOW_OUTBOUND_FTP" ]; then
+	modprobe -q nf_conntrack_ftp
+	if [ $? -lt "1" ]; then
+		iptables -A IPLIST_OUT -p tcp --sport 20 --dport 20 -m state --state ESTABLISHED,RELATED \
+			-m helper --helper ftp -j RETURN
+		iptables -A IPLIST_OUT -p tcp --sport 21 --dport 21 -m state --state ESTABLISHED,RELATED \
+			-m helper --helper ftp -j RETURN
+		iptables -A IPLIST_OUT -p tcp --sport 1024: --dport 1024: -m state --state ESTABLISHED,RELATED \
+			-m helper --helper ftp -j RETURN
+	else
+		modprobe -q ip_conntrack_ftp
+		if [ $? -lt "1" ]; then
+			iptables -A IPLIST_OUT -p tcp --sport 20 --dport 20 -m state --state ESTABLISHED,RELATED \
+				-m helper --helper ftp -j RETURN
+			iptables -A IPLIST_OUT -p tcp --sport 21 --dport 21 -m state --state ESTABLISHED,RELATED \
+				-m helper --helper ftp -j RETURN
+			iptables -A IPLIST_OUT -p tcp --sport 1024: --dport 1024: -m state --state ESTABLISHED,RELATED \
+				-m helper --helper ftp -j RETURN
+		fi
+	fi
+fi
+iptables -A IPLIST_OUT -p all -m state --state ESTABLISHED,RELATED -j RETURN
 iptables -A IPLIST_OUT -p all -m mark --mark 2 -j $DROP
 iptables -A IPLIST_OUT -p all -m mark ! --mark 1 -j NFQUEUE
