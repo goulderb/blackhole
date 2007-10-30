@@ -19,7 +19,11 @@ for i in ${IPBLOCK_WHITELIST_IN[@]}; do
 done
 iptables -A IPLIST_IN -p all -m mark --mark 2 -j $DROP
 iptables -A IPLIST_IN -p all -m mark ! --mark 1 -j NFQUEUE
-iptables -A OUTPUT -p all -m state --state NEW,ESTABLISHED,RELATED -j IPLIST_OUT
+if [ -n "$IPBLOCK_ALLOW_OUTBOUND_FTP" ]; then
+	iptables -A OUTPUT -p all -m state --state NEW,ESTABLISHED,RELATED -j IPLIST_OUT
+else
+	iptables -A OUTPUT -p all -m state --state NEW -j IPLIST_OUT
+fi
 if [ -n "$IPBLOCK_ALLOW_OUTBOUND_PING" ]; then
 	iptables -A IPLIST_OUT -p icmp --icmp-type 8 -j RETURN
 fi
@@ -52,7 +56,7 @@ if [ -n "$IPBLOCK_ALLOW_OUTBOUND_FTP" ]; then
 				-m helper --helper ftp -j RETURN
 		fi
 	fi
+	iptables -A IPLIST_OUT -p all -m state --state ESTABLISHED,RELATED -j RETURN
 fi
-iptables -A IPLIST_OUT -p all -m state --state ESTABLISHED,RELATED -j RETURN
 iptables -A IPLIST_OUT -p all -m mark --mark 2 -j $DROP
 iptables -A IPLIST_OUT -p all -m mark ! --mark 1 -j NFQUEUE

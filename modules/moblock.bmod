@@ -18,7 +18,11 @@ for i in ${IPBLOCK_WHITELIST_IN[@]}; do
 	iptables -A MOBLOCK_IN -p $PROTO --dport $PORT $EXTOPTS -j RETURN
 done
 iptables -A MOBLOCK_IN -p all -j NFQUEUE
-iptables -A OUTPUT -p all -m state --state NEW,ESTABLISHED,RELATED -j MOBLOCK_OUT
+if [ -n "$IPBLOCK_ALLOW_OUTBOUND_FTP" ]; then
+	iptables -A OUTPUT -p all -m state --state NEW,ESTABLISHED,RELATED -j MOBLOCK_OUT
+else
+	iptables -A OUTPUT -p all -m state --state NEW -j MOBLOCK_OUT
+fi
 if [ -n "$IPBLOCK_ALLOW_OUTBOUND_PING" ]; then
 	iptables -A MOBLOCK_OUT -p icmp --icmp-type 8 -j RETURN
 fi
@@ -51,6 +55,6 @@ if [ -n "$IPBLOCK_ALLOW_OUTBOUND_FTP" ]; then
 				-m helper --helper ftp -j RETURN
 		fi
 	fi
+	iptables -A MOBLOCK_OUT -p all -m state --state ESTABLISHED,RELATED -j RETURN
 fi
-iptables -A MOBLOCK_OUT -p all -m state --state ESTABLISHED,RELATED -j RETURN
 iptables -A MOBLOCK_OUT -p all -j NFQUEUE
