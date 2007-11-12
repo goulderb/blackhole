@@ -10,10 +10,20 @@ if [ -n "$IPBLOCK_ALLOW_OUTBOUND_PING" ]; then
 	iptables -A MOBLOCK_IN -p icmp --icmp-type 0 -j RETURN
 fi
 for i in ${IPBLOCK_WHITELIST_IN[@]}; do
-	local PORT=`echo $i | cut -d/ -f1`
-	local PROTO=`echo $i | cut -d/ -f2`
+	local PORT="`echo $i | cut -d/ -f1`"
+	local PROTO="`echo $i | cut -d/ -f2`"
+	local DIRECTION="`echo $i | cut -d/ -f3`"
 	if [ -f $CONFDIR/extopts.conf ]; then
 		EXTOPTS="`grep $PORT/input $CONFDIR/extopts.conf | cut -d: -f2 | sed 's/\s//'`"
+	fi
+	if [ "$DIRECTION" = "s" ]; then
+		PORT_OPTS="--sport $PORT"
+	elif [ "$DIRECTION" = "d" ]; then
+		PORT_OPTS="--dport $PORT"
+	elif [ "$DIRECTION" = "b" ]; then
+		PORT_OPTS="--dport $PORT --sport $PORT"
+	else
+		PORT_OPTS="--dport $PORT"
 	fi
 	iptables -A MOBLOCK_IN -p $PROTO --dport $PORT $EXTOPTS -j RETURN
 done
@@ -27,10 +37,20 @@ if [ -n "$IPBLOCK_ALLOW_OUTBOUND_PING" ]; then
 	iptables -A MOBLOCK_OUT -p icmp --icmp-type 8 -j RETURN
 fi
 for i in ${IPBLOCK_WHITELIST_OUT[@]}; do
-	local PORT=`echo $i | cut -d/ -f1`
-	local PROTO=`echo $i | cut -d/ -f2`
+	local PORT="`echo $i | cut -d/ -f1`"
+	local PROTO="`echo $i | cut -d/ -f2`"
+	local DIRECTION="`echo $i | cut -d/ -f3`"
 	if [ -f $CONFDIR/extopts.conf ]; then
 		EXTOPTS="`grep $PORT/input $CONFDIR/extopts.conf | cut -d: -f2 | sed 's/\s//'`"
+	fi
+	if [ "$DIRECTION" = "s" ]; then
+		PORT_OPTS="--sport $PORT"
+	elif [ "$DIRECTION" = "d" ]; then
+		PORT_OPTS="--dport $PORT"
+	elif [ "$DIRECTION" = "b" ]; then
+		PORT_OPTS="--dport $PORT --sport $PORT"
+	else
+		PORT_OPTS="--dport $PORT"
 	fi
 	iptables -A MOBLOCK_OUT -p $PROTO --dport $PORT $EXTOPTS -j RETURN
 done

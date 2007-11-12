@@ -10,12 +10,22 @@ if [ -n "$IPBLOCK_ALLOW_OUTBOUND_PING" ]; then
 	iptables -A IPLIST_IN -p icmp --icmp-type 0 -j RETURN
 fi
 for i in ${IPBLOCK_WHITELIST_IN[@]}; do
-	local PORT=`echo $i | cut -d/ -f1`
-	local PROTO=`echo $i | cut -d/ -f2`
+	local PORT="`echo $i | cut -d/ -f1`"
+	local PROTO="`echo $i | cut -d/ -f2`"
+	local DIRECTION="`echo $i | cut -d/ -f3`"
 	if [ -f $CONFDIR/extopts.conf ]; then
 		EXTOPTS="`grep $PORT/input $CONFDIR/extopts.conf | cut -d: -f2 | sed 's/\s//'`"
 	fi
-	iptables -A IPLIST_IN -p $PROTO --dport $PORT $EXTOPTS -j RETURN
+	if [ "$DIRECTION" = "s" ]; then
+		PORT_OPTS="--sport $PORT"
+	elif [ "$DIRECTION" = "d" ]; then
+		PORT_OPTS="--dport $PORT"
+	elif [ "$DIRECTION" = "b" ]; then
+		PORT_OPTS="--dport $PORT --sport $PORT"
+	else
+		PORT_OPTS="--dport $PORT"
+	fi
+	iptables -A IPLIST_IN -p $PROTO $PORT_OPTS $EXTOPTS -j RETURN
 done
 iptables -A IPLIST_IN -p all -m mark --mark 2 -j $DROP
 iptables -A IPLIST_IN -p all -m mark ! --mark 1 -j NFQUEUE
@@ -28,31 +38,33 @@ if [ -n "$IPBLOCK_ALLOW_OUTBOUND_PING" ]; then
 	iptables -A IPLIST_OUT -p icmp --icmp-type 8 -j RETURN
 fi
 for i in ${IPBLOCK_WHITELIST_OUT[@]}; do
-	local PORT=`echo $i | cut -d/ -f1`
-	local PROTO=`echo $i | cut -d/ -f2`
+	local PORT="`echo $i | cut -d/ -f1`"
+	local PROTO="`echo $i | cut -d/ -f2`"
+	local DIRECTION="`echo $i | cut -d/ -f3`"
 	if [ -f $CONFDIR/extopts.conf ]; then
 		EXTOPTS="`grep $PORT/input $CONFDIR/extopts.conf | cut -d: -f2 | sed 's/\s//'`"
 	fi
-	iptables -A IPLIST_OUT -p $PROTO --dport $PORT $EXTOPTS -j RETURN
+	if [ "$DIRECTION" = "s" ]; then
+		PORT_OPTS="--sport $PORT"
+	elif [ "$DIRECTION" = "d" ]; then
+		PORT_OPTS="--dport $PORT"
+	elif [ "$DIRECTION" = "b" ]; then
+		PORT_OPTS="--dport $PORT --sport $PORT"
+	else
+		PORT_OPTS="--dport $PORT"
+	fi
+	iptables -A IPLIST_OUT -p $PROTO $PORT_OPTS $EXTOPTS -j RETURN
 done
 # FTP has special annoyances which make it so we have to work with it, all this crap makes dealing with it a lot easier.
 if [ -n "$IPBLOCK_ALLOW_OUTBOUND_FTP" ]; then
 	modprobe -q nf_conntrack_ftp
 	if [ $? -lt "1" ]; then
-		iptables -A IPLIST_OUT -p tcp --sport 20 --dport 20 -m state --state ESTABLISHED,RELATED \
-			-m helper --helper ftp -j RETURN
-		iptables -A IPLIST_OUT -p tcp --sport 21 --dport 21 -m state --state ESTABLISHED,RELATED \
-			-m helper --helper ftp -j RETURN
-		iptables -A IPLIST_OUT -p tcp --sport 1024: --dport 1024: -m state --state ESTABLISHED,RELATED \
+		iptables -A IPLIST_OUT -p tcp -m state --state ESTABLISHED,RELATED \
 			-m helper --helper ftp -j RETURN
 	else
 		modprobe -q ip_conntrack_ftp
 		if [ $? -lt "1" ]; then
-			iptables -A IPLIST_OUT -p tcp --sport 20 --dport 20 -m state --state ESTABLISHED,RELATED \
-				-m helper --helper ftp -j RETURN
-			iptables -A IPLIST_OUT -p tcp --sport 21 --dport 21 -m state --state ESTABLISHED,RELATED \
-				-m helper --helper ftp -j RETURN
-			iptables -A IPLIST_OUT -p tcp --sport 1024: --dport 1024: -m state --state ESTABLISHED,RELATED \
+			iptables -A IPLIST_OUT -p tcp -m state --state ESTABLISHED,RELATED \
 				-m helper --helper ftp -j RETURN
 		fi
 	fi
