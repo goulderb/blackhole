@@ -59,12 +59,14 @@ done
 if [ -n "$IPBLOCK_ALLOW_OUTBOUND_FTP" ]; then
 	modprobe -q nf_conntrack_ftp
 	if [ $? -lt "1" ]; then
-		iptables -A IPLIST_OUT -p tcp -m state --state ESTABLISHED,RELATED \
+		iptables -A IPLIST_OUT -p tcp --dport 20:21 -m state --state NEW -j RETURN
+		iptables -A IPLIST_OUT -p tcp --dport 1024: -m state --state ESTABLISHED,RELATED \
 			-m helper --helper ftp -j RETURN
 	else
 		modprobe -q ip_conntrack_ftp
 		if [ $? -lt "1" ]; then
-			iptables -A IPLIST_OUT -p tcp -m state --state ESTABLISHED,RELATED \
+			iptables -A IPLIST_OUT -p tcp --dport 20:21 -m state --state NEW -j RETURN
+			iptables -A IPLIST_OUT -p tcp --dport 1024: -m state --state ESTABLISHED,RELATED \
 				-m helper --helper ftp -j RETURN
 		fi
 	fi
