@@ -8,6 +8,9 @@ Changes:
   for moblock. Note that the daemon must be started manually.
 - A new module, iplist, is included that provides similar functionality as
   moblock module, but without the pitfalls of moblock.
+- Add in iptables fail checking, by aliasing iptables to failcheck iptables,
+  failcheck is a function which runs all arguments passed to it as one command
+	and then checks for common failure exit codes.
 - Various micro optimisations and cleanups.
 - Use tabs, not spaces.
 

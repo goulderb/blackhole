@@ -36,6 +36,8 @@ else
 	exit 1
 fi
 
+alias iptables="failcheck iptables"
+
 case "$1" in
 start)
 	if [ $LOG_DROPPED_PACKETS = "YES" ]; then

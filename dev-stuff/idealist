@@ -1,4 +1,1 @@
-Automatic iptables failchecking:
-Use a function that gathers all the arguments passed to it and sends them to
-iptables, then call failcheck to make sure iptables didn't die.
-(We'll see if this is required, it would add code for just doing pretty exits)
+
