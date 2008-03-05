@@ -4,10 +4,10 @@ Changes:
 - Fix some syntax errors in bruteforce-defeat.bmod (patch will be published
   for 1.1)
 - Remove syn-flood prevention, this might return as a per-port module.
-- A new module, moblock, is included that sets up the required nfqueue's
-  for moblock. Note that the daemon must be started manually.
-- A new module, iplist, is included that provides similar functionality as
-  moblock module, but without the pitfalls of moblock.
+- A new module, ipblock-nfqueue, is included that sets up the required
+	iptables rules for moblock/iplist.
+- The ipblock-blackhole module replaces ip-block, being more configurable and
+	effective.
 - Add in iptables fail checking, by aliasing iptables to failcheck iptables,
   failcheck is a function which runs all arguments passed to it as one command
 	and then checks for common failure exit codes.

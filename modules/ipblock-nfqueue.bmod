@@ -1,0 +1,95 @@
+# VERSION: 1.0
+# REVISION: 0
+# NAME: ipblock-nfqueue
+# REQUIRES:
+
+if [ $NFQUEUE_IPBLOCK_PROG = "moblock" ]; then
+	export CHAIN_IN="MOBLOCK_IN"
+	export CHAIN_OUT="MOBLOCK_OUT"
+elif [ $NFQUEUE_IPBLOCK_PROG = "iplist" ]; then
+	export CHAIN_IN="IPLIST_IN"
+	export CHAIN_OUT="IPLIST_OUT"
+fi
+
+iptables -N $CHAIN_IN
+iptables -N $CHAIN_OUT
+iptables -A INPUT -p all -m state --state NEW -j $CHAIN_IN
+if [ -n "$IPBLOCK_ALLOW_OUTBOUND_PING" ]; then
+	iptables -A $CHAIN_IN -p icmp --icmp-type 0 -j RETURN
+fi
+for i in ${IPBLOCK_WHITELIST_IN[@]}; do
+	local PORT="`echo $i | cut -d/ -f1`"
+	local PROTO="`echo $i | cut -d/ -f2`"
+	local DIRECTION="`echo $i | cut -d/ -f3`"
+	if [ -f $CONFDIR/extopts.conf ]; then
+		EXTOPTS="`grep $PORT/input $CONFDIR/extopts.conf | cut -d: -f2 | sed 's/\s//'`"
+	fi
+	if [ "$DIRECTION" = "s" ]; then
+		PORT_OPTS="--sport $PORT"
+	elif [ "$DIRECTION" = "d" ]; then
+		PORT_OPTS="--dport $PORT"
+	elif [ "$DIRECTION" = "b" ]; then
+		PORT_OPTS="--dport $PORT --sport $PORT"
+	else
+		PORT_OPTS="--dport $PORT"
+	fi
+	iptables -A $CHAIN_IN -p $PROTO $PORT_OPTS $EXTOPTS -j RETURN
+done
+
+if [ $NFQUEUE_IPBLOCK_PROG = "moblock" ]; then
+	iptables -A $CHAIN_IN -p all -j NFQUEUE
+elif [ $NFQUEUE_IPBLOCK_PROG = "iplist" ]; then
+	iptables -A $CHAIN_IN -p all -m mark --mark 2 -j $DROP
+	iptables -A $CHAIN_IN -p all -m mark ! --mark 1 -j NFQUEUE
+fi
+
+if [ -n "$IPBLOCK_ALLOW_OUTBOUND_FTP" ]; then
+	iptables -A OUTPUT -p all -m state --state NEW,ESTABLISHED,RELATED -j $CHAIN_OUT
+else
+	iptables -A OUTPUT -p all -m state --state NEW -j $CHAIN_OUT
+fi
+if [ -n "$IPBLOCK_ALLOW_OUTBOUND_PING" ]; then
+	iptables -A $CHAIN_OUT -p icmp --icmp-type 8 -j RETURN
+fi
+for i in ${IPBLOCK_WHITELIST_OUT[@]}; do
+	local PORT="`echo $i | cut -d/ -f1`"
+	local PROTO="`echo $i | cut -d/ -f2`"
+	local DIRECTION="`echo $i | cut -d/ -f3`"
+	if [ -f $CONFDIR/extopts.conf ]; then
+		EXTOPTS="`grep $PORT/input $CONFDIR/extopts.conf | cut -d: -f2 | sed 's/\s//'`"
+	fi
+	if [ "$DIRECTION" = "s" ]; then
+		PORT_OPTS="--sport $PORT"
+	elif [ "$DIRECTION" = "d" ]; then
+		PORT_OPTS="--dport $PORT"
+	elif [ "$DIRECTION" = "b" ]; then
+		PORT_OPTS="--dport $PORT --sport $PORT"
+	else
+		PORT_OPTS="--dport $PORT"
+	fi
+	iptables -A $CHAIN_OUT -p $PROTO $PORT_OPTS $EXTOPTS -j RETURN
+done
+# FTP has special annoyances which make it so we have to work with it, all this crap makes dealing with it a lot easier.
+if [ -n "$IPBLOCK_ALLOW_OUTBOUND_FTP" ]; then
+	modprobe -q nf_conntrack_ftp
+	if [ $? -lt "1" ]; then
+		iptables -A $CHAIN_OUT -p tcp --dport 20:21 -m state --state NEW -j RETURN
+		iptables -A $CHAIN_OUT -p tcp --dport 1024: -m state --state ESTABLISHED,RELATED \
+			-m helper --helper ftp -j RETURN
+	else
+		modprobe -q ip_conntrack_ftp
+		if [ $? -lt "1" ]; then
+			iptables -A $CHAIN_OUT -p tcp --dport 20:21 -m state --state NEW -j RETURN
+			iptables -A $CHAIN_OUT -p tcp --dport 1024: -m state --state ESTABLISHED,RELATED \
+				-m helper --helper ftp -j RETURN
+		fi
+	fi
+	iptables -A $CHAIN_OUT -p all -m state --state ESTABLISHED,RELATED -j RETURN
+fi
+
+if [ $IPBLOCK_PROG = "moblock" ]; then
+	iptables -A $CHAIN_IN -p all -j NFQUEUE
+elif [ $IPBLOCK_PROG = "iplist" ]; then
+	iptables -A $CHAIN_OUT -p all -m mark --mark 2 -j $DROP
+	iptables -A $CHAIN_OUT -p all -m mark ! --mark 1 -j NFQUEUE
+fi
