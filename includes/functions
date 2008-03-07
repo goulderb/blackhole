@@ -13,16 +13,12 @@ warn() {
 failcheck()	{
 $@
 if [ $? = "1" ]; then
-	echo "$1 exited with an error, exiting."
-	exit 1
+	die "$1 exited with an error."
 elif [ $? = "2" ]; then
-	echo "$1 exited with status 2, exiting."
-	exit 1
+	die "$1 exited with status 2."
 elif [ $? = "130" ]; then
-	echo "$1 terminated by signal 2"
-	exit 1
+	die "$1 terminated by signal 2"
 elif [ $? = "137" ]; then
-	echo "$1 terminated by signal 9"
-	exit 1
+	die "$1 terminated by signal 9"
 fi
 }
