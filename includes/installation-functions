@@ -2,39 +2,35 @@
 # Written by: predatorfreak
 
 createdirs() {
-	if [ ! -d $DESTDIR/etc/blackhole/ ]; then
+	if [ ! -d "$DESTDIR/etc/blackhole/" ]; then
 		mkdir -p $DESTDIR/etc/blackhole/
 	fi
-	if [ ! -d $PREFIX/bin ]; then
+	if [ ! -d "$PREFIX/bin" ]; then
 		mkdir -p $PREFIX/bin
 	fi
-	if [ ! -d $PREFIX/share/blackhole ]; then
+	if [ ! -d "$PREFIX/share/blackhole" ]; then
 		mkdir -p $PREFIX/share/blackhole/{includes,modules}
 	else
-		if [ ! -d $PREFIX/share/blackhole/includes ]; then
+		if [ ! -d "$PREFIX/share/blackhole/includes" ]; then
 			mkdir $PREFIX/share/blackhole/includes
-		elif [ ! -d $PREFIX/share/blackhole/modules ]; then
+		elif [ ! -d "$PREFIX/share/blackhole/modules" ]; then
 			mkdir $PREFIX/share/blackhole/modules
 		fi
 	fi
 }
 
 applyrules() {
-	if [ -n $APPLY ]; then
+	if [ -n "$APPLY" ]; then
 		$PREFIX/bin/blackhole restart
-	else
-		echo "Warning: The new rules have not been set"
-		echo "If you wish to set them at a later date"
-		echo "Run $PREFIX/blackhole start"
 	fi
 }
 
 rcins()	{
-	if [ -n $RCINS -a -n $1 ]; then
+	if [ -n "$RCINS" -a -n $1 ]; then
 		case "$1" in
 		slackware)
 		if [ -z "`grep rc.firewall /etc/rc.d/rc.local`" ]; then
-			ln -sf $PREFIX/bin/blackhole $DESTDIR/etc/rc.d/rc.firewall
+			ln -sf "$PREFIX/bin/blackhole" "$DESTDIR/etc/rc.d/rc.firewall"
 			echo "/etc/rc.d/rc.firewall start" >> /etc/rc.d/rc.local
 		else
 			echo "rc.firewall is referenced in rc.local, please edit rc.local"
