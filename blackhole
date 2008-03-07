@@ -3,7 +3,7 @@
 
 # Environment checks.
 if [ ! `whoami` = "root" ]; then
-	echo "Blackhole requires root privilages to modify iptables rules."
+	echo "ERROR: Blackhole requires root privilages to modify iptables rules."
 	exit 1
 fi
 
@@ -14,7 +14,7 @@ elif [ -f $PWD/config/blackhole.conf ]; then
 	. $PWD/config/blackhole.conf
 	export CONFDIR=$PWD/config
 else
-	echo "Couldn't find configuration file, dieing."
+	echo "ERROR: Couldn't find configuration file, dieing."
 	exit 1
 fi
 
@@ -23,16 +23,18 @@ if [ -d $PREFIX/share/blackhole/modules -a -f $PREFIX/share/blackhole/modules/co
 elif [ -d $PWD/modules -a -f $PWD/modules/core.bmod ]; then
 	MODDIR=$PWD/modules
 else
-	echo "Modules directory doesn't exist, dieing."
+	echo "ERROR: Modules directory doesn't exist, dieing."
 	exit 1
 fi
 
-if [ -f $PREFIX/share/blackhole/includes/module-functions ]; then
+if [ -f $PREFIX/share/blackhole/includes/module-functions -a -f $PREFIX/share/blackhole/includes/functions ]; then
 	. $PREFIX/share/blackhole/includes/module-functions
-elif [ -f $PWD/includes/module-functions ]; then
+	. $PREFIX/share/blackhole/includes/functions
+elif [ -f $PWD/includes/module-functions -a -f $PWD/includes/functions ]; then
 	. $PWD/includes/module-functions
+	. $PWD/includes/functions
 else
-	echo "Couldn't find the requried includes, dieing."
+	echo "ERROR: Couldn't find the requried includes, dieing."
 	exit 1
 fi
 

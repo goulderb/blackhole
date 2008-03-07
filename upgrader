@@ -7,11 +7,12 @@ if [ ! `whoami` = "root" ]; then
 	exit 1
 fi
 
-if [ -f $PWD/config/installation.conf -a -f $PWD/config/blackhole.conf ]; then
-	if [ -f $PWD/includes/installation-functions ]; then
-		. $PWD/config/installation.conf
+if [ -f $PWD/config/installation.conf ]; then
+	if [ -f $PWD/includes/installation-functions -a -f $PWD/includes/functions ]; then
 		. $PWD/config/blackhole.conf
+		. $PWD/config/installation.conf
 		. $PWD/includes/installation-functions
+		. $PWD/includes/functions
 	else
 		echo "Unable to load the required functions."
 		exit 1
@@ -22,12 +23,12 @@ else
 fi
 
 case "$1" in
-slackware)
-	if [ -d /etc/blackhole ]; then
+crux)
+	if [ -d $DESTDIR/etc/blackhole ]; then
 		echo "Upgrading Blackhole installation"
-		rcins slackware
 		createdirs
-		cp -i config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
+		rcins crux
+		cp -i config/{blackhole,extopts,ipblock-{input,output}}.conf /etc/blackhole/
 		cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
 		cp modules/* $PREFIX/share/blackhole/modules/
 		cp blackhole $PREFIX/bin/blackhole
@@ -36,15 +37,31 @@ slackware)
 		echo "Done."
 		exit 0
 	else
-		echo "Upgrader: The directory /etc/blackhole doesn't exist, please run installer instead."
-		exit 1
+		die "Upgrader: The directory /etc/blackhole doesn't exist, please run installer instead."
+	fi
+;;
+slackware)
+	if [ -d $DESTDIR/etc/blackhole ]; then
+		echo "Upgrading Blackhole installation"
+		createdirs
+		rcins slackware
+		cp -i config/{blackhole,extopts,ipblock-{input,output}}.conf /etc/blackhole/
+		cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
+		cp modules/* $PREFIX/share/blackhole/modules/
+		cp blackhole $PREFIX/bin/blackhole
+		chmod +x $PREFIX/bin/blackhole
+		applyrules
+		echo "Done."
+		exit 0
+	else
+		die "Upgrader: The directory /etc/blackhole doesn't exist, please run installer instead."
 	fi
 ;;
 generic)
-	if [ -d /etc/blackhole ]; then
+	if [ -d $DESTDIR/etc/blackhole ]; then
 		echo "Upgrading Blackhole installation"
 		createdirs
-		cp -i config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
+		cp -i config/{blackhole,extopts,ipblock-{input,output}}.conf /etc/blackhole/
 		cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
 		cp modules/* $PREFIX/share/blackhole/modules/
 		cp blackhole $PREFIX/bin/blackhole
@@ -53,26 +70,7 @@ generic)
 		echo "Done."
 		exit 0
 	else
-		echo "Upgrader: The directory /etc/blackhole doesn't exist, please run installer instead."
-		exit 1
-	fi
-;;
-crux)
-	if [ -d /etc/blackhole ]; then
-		echo "Upgrading Blackhole installation"
-		rcins crux
-		createdirs
-		cp -i config/{blackhole,extopts,ipblock}.conf /etc/blackhole/
-		cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
-		cp modules/* $PREFIX/share/blackhole/modules/
-		cp blackhole $PREFIX/bin/blackhole
-		chmod +x $PREFIX/bin/blackhole
-		applyrules
-		echo "Done."
-		exit 0
-	else
-		echo "Upgrader: The directory /etc/blackhole doesn't exist, please run installer instead."
-		exit 1
+		die "Upgrader: The directory /etc/blackhole doesn't exist, please run installer instead."
 	fi
 ;;
 *)
@@ -82,8 +80,8 @@ crux)
 	echo "Usage: ./upgrader [OPTION]"
 	echo
 	echo "Options:"
-	echo "slackware"
 	echo "crux"
+	echo "slackware"
 	echo "generic"
 	exit 0
 ;;
