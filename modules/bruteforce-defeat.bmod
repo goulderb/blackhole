@@ -6,14 +6,14 @@
 if [ -n "${BRUTEFORCE_DEFEAT[*]}" ]; then
 	iptables -N BRUTEFORCE_DEFEAT
 	iptables -A INPUT -j BRUTEFORCE_DEFEAT
-	for i in ${BRUTEFORCE_DEFEAT[@]}; do
-		local PORT=`echo $i | cut -d/ -f1`
-		local PROTO=`echo $i | cut -d/ -f2`
-		iptables -A INPUT -p $PROTO --dport $PORT -m state --state NEW -j BRUTEFORCE_DEFEAT
-	done
 	for i in ${BRUTEFORCE_WHITELIST[@]}; do
-		iptables -A BRUTEFORCE_DEFEAT -s $i -j RETURN
+		iptables -A BRUTEFORCE_DEFEAT -s "$i" -j RETURN
 	done
-	iptables -A BRUTEFORCE_DEFEAT -m recent --update --seconds 15 -j $DROP
+	for i in ${BRUTEFORCE_DEFEAT[@]}; do
+		local PORT="`echo $i | cut -d/ -f1`"
+		local PROTO="`echo $i | cut -d/ -f2`"
+		iptables -A BRUTEFORCE_DEFEAT -p $PROTO --dport $PORT -m state --state NEW \
+			-m recent --update --seconds 15 -j $DROP
+	done
 	iptables -A BRUTEFORCE_DEFEAT -m recent --set -j RETURN
 fi
