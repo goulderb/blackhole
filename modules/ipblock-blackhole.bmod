@@ -3,7 +3,7 @@
 # NAME: ipblock-blackhole
 # REQUIRES:
 
-if [ -f $CONFDIR/ipblock-input.conf -a ! `cat $CONFDIR/ipblock-input.conf | wc -l` = 0 ]; then
+if [ -f "$CONFDIR/ipblock-input.conf" -a ! "`cat $CONFDIR/ipblock-input.conf | wc -l`" = 0 ]; then
 	iptables -N IPBLOCK_IN
 	iptables -A INPUT -p all -m state --state NEW -j IPBLOCK_IN
 	for i in `cat $CONFDIR/ipblock-input.conf`; do
@@ -13,29 +13,29 @@ if [ -f $CONFDIR/ipblock-input.conf -a ! `cat $CONFDIR/ipblock-input.conf | wc -
 		local DIRECTION="`echo $i | cut -d/ -f4`"
 
 		if [ "$DIRECTION" = "s" ]; then
-			PORT_OPTS="--sport $PORT"
+			PORT_OPTS="--sport "$PORT""
 		elif [ "$DIRECTION" = "d" ]; then
-			PORT_OPTS="--dport $PORT"
+			PORT_OPTS="--dport "$PORT""
 		elif [ "$DIRECTION" = "b" ]; then
-			PORT_OPTS="--dport $PORT --sport $PORT"
+			PORT_OPTS="--dport "$PORT" --sport "$PORT""
 		else
-			PORT_OPTS="--dport $PORT"
+			PORT_OPTS="--dport "$PORT""
 		fi
 
-		if [ -f $CONFDIR/extopts.conf ]; then
-			EXTOPTS="`grep $PORT/input $CONFDIR/extopts.conf | cut -d: -f2 | sed 's/\s//'`"
+		if [ -f "$CONFDIR/extopts.conf" ]; then
+			EXTOPTS="`grep "$PORT/input" "$CONFDIR/extopts.conf" | cut -d: -f2 | sed 's/\s//'`"
 		fi
 
-		if [ -n $PORT -a $PORT = "all" -a -n $PROTO ]; then
-		 iptables -A IPBLOCK_IN -s $IP -p $PROTO $EXTOPTS -j $DROP
-		elif [ -n $PORT -a ! $PORT = "all" -a -n $PROTO ]; then
-		 iptables -A IPBLOCK_IN -s $IP -p $PROTO $PORT_OPTS $EXTOPTS -j $DROP
+		if [ -n "$PORT" -a "$PORT" = "all" -a -n "$PROTO" ]; then
+		 iptables -A IPBLOCK_IN -s "$IP" -p "$PROTO" $EXTOPTS -j $DROP
+		elif [ -n "$PORT" -a ! "$PORT" = "all" -a -n "$PROTO" ]; then
+		 iptables -A IPBLOCK_IN -s "$IP" -p "$PROTO" $PORT_OPTS $EXTOPTS -j $DROP
 		fi
 		iptables -A IPBLOCK_IN -j RETURN
 	done
 fi
 
-if [ -f $CONFDIR/ipblock-output.conf -a ! `cat $CONFDIR/ipblock-output.conf | wc -l` = 0 ]; then
+if [ -f "$CONFDIR/ipblock-output.conf" -a ! "`cat $CONFDIR/ipblock-output.conf | wc -l`" = 0 ]; then
 	iptables -N IPBLOCK_OUT
 	if [ -n "$IPBLOCK_ALLOW_OUTBOUND_FTP" ]; then
 		iptables -A OUTPUT -p all -m state --state NEW,ESTABLISHED,RELATED -j IPBLOCK_OUT
@@ -49,27 +49,27 @@ if [ -f $CONFDIR/ipblock-output.conf -a ! `cat $CONFDIR/ipblock-output.conf | wc
 		local DIRECTION="`echo $i | cut -d/ -f4`"
 
 		if [ "$DIRECTION" = "s" ]; then
-			PORT_OPTS="--sport $PORT"
+			PORT_OPTS="--sport "$PORT""
 		elif [ "$DIRECTION" = "d" ]; then
-			PORT_OPTS="--dport $PORT"
+			PORT_OPTS="--dport "$PORT""
 		elif [ "$DIRECTION" = "b" ]; then
-			PORT_OPTS="--dport $PORT --sport $PORT"
+			PORT_OPTS="--dport "$PORT" --sport "$PORT""
 		else
-			PORT_OPTS="--dport $PORT"
+			PORT_OPTS="--dport "$PORT""
 		fi
 
-		if [ -f $CONFDIR/extopts.conf ]; then
-			EXTOPTS="`grep $PORT/input $CONFDIR/extopts.conf | cut -d: -f2 | sed 's/\s//'`"
+		if [ -f "$CONFDIR/extopts.conf" ]; then
+			EXTOPTS="`grep "$PORT/input" "$CONFDIR/extopts.conf" | cut -d: -f2 | sed 's/\s//'`"
 		fi
 
 		if [ -n "$IPBLOCK_ALLOW_OUTBOUND_PING" ]; then
 			iptables -A IPBLOCK_OUT -p icmp --icmp-type 8 -j RETURN
 		fi
 
-		if [ -n $PORT -a $PORT = "all" -a -n $PROTO ]; then
-			iptables -A IPBLOCK_OUT -s $IP -p $PROTO $EXTOPTS -j $DROP
-		elif [ -n $PORT -a ! $PORT = "all" -a -n $PROTO ]; then
-			iptables -A IPBLOCK_OUT -s $IP -p $PROTO $PORT_OPTS $EXTOPTS -j $DROP
+		if [ -n "$PORT" -a "$PORT" = "all" -a -n "$PROTO" ]; then
+			iptables -A IPBLOCK_OUT -s "$IP" -p "$PROTO" $EXTOPTS -j $DROP
+		elif [ -n "$PORT" -a ! "$PORT" = "all" -a -n "$PROTO" ]; then
+			iptables -A IPBLOCK_OUT -s "$IP" -p "$PROTO" $PORT_OPTS $EXTOPTS -j $DROP
 		fi
 
 		# FTP has special annoyances which make it so we have to work with it, all this crap makes dealing with it a lot easier.
@@ -88,12 +88,6 @@ if [ -f $CONFDIR/ipblock-output.conf -a ! `cat $CONFDIR/ipblock-output.conf | wc
 				fi
 			fi
 			iptables -A IPBLOCK_OUT -p all -m state --state ESTABLISHED,RELATED -j RETURN
-		fi
-
-		if [ -n $PORT -a $PORT = "all" -a -n $PROTO ]; then
-			iptables -A IPBLOCK_OUT -s $IP -p $PROTO $EXTOPTS -j $DROP
-		elif [ -n $PORT -a ! $PORT = "all" -a -n $PROTO ]; then
-			iptables -A IPBLOCK_OUT -s $IP -p $PROTO $PORT_OPTS $EXTOPTS -j $DROP
 		fi
 
 		iptables -A IPBLOCK_OUT -j RETURN

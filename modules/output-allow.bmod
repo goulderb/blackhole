@@ -9,10 +9,10 @@ if [ -n "${OUTPUT_ALLOW[*]}" ]; then
 	for i in ${OUTPUT_ALLOW[@]}; do
 		local PORT=`echo $i | cut -d/ -f1`
 		local PROTO=`echo $i | cut -d/ -f2`
-		if [ -f $CONFDIR/extopts.conf ]; then
+		if [ -f "$CONFDIR/extopts.conf" ]; then
 		 EXTOPTS="`grep $PORT/output $CONFDIR/extopts.conf | cut -d: -f2 | sed 's/\s//'`"
 		fi
-		iptables -A OUTPUT_ALLOW -p $PROTO --dport $PORT $EXTOPTS -j ACCEPT
+		iptables -A OUTPUT_ALLOW -p "$PROTO" --dport "$PORT" $EXTOPTS -j ACCEPT
 	done
 	iptables -A OUTPUT_ALLOW -j RETURN
 fi
