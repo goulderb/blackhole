@@ -16,3 +16,4 @@ iptables -A TCPFLAG -p tcp --tcp-flags ALL ALL -j $DROP
 iptables -A TCPFLAG -p tcp --tcp-flags ALL FIN -j $DROP
 iptables -A TCPFLAG -p tcp --tcp-flags SYN,RST SYN,RST -j $DROP
 iptables -A TCPFLAG -p tcp --tcp-flags SYN,FIN SYN,FIN -j $DROP
+iptables -A TCPFLAG -j RETURN
