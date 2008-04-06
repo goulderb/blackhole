@@ -2,33 +2,33 @@
 # Written by: predatorfreak
 
 get_headers() {
-	if [ -n $1 -a -f $MODDIR/$1.bmod ]; then
-		MODVERSION=`grep VERSION $MODDIR/$1.bmod | cut -d: -f2 | sed 's/\s//'`
-		MODNAME=`grep NAME $MODDIR/$1.bmod | cut -d: -f2 | sed 's/\s//'`
-		MODREVISION=`grep REVISION $MODDIR/$1.bmod | cut -d: -f2 | sed 's/\s//'`
-		DEPENDS=`grep REQUIRES $MODDIR/$1.bmod | cut -d: -f2 | sed 's/\s//' | sed 's/\s/\n/g'`
+	if [ -n "$1" -a -f "$MODDIR/$1.bmod" ]; then
+		export MODVERSION=`grep VERSION "$MODDIR/$1.bmod" | cut -d: -f2 | sed 's/\s//'`
+		export MODNAME=`grep NAME "$MODDIR/$1.bmod" | cut -d: -f2 | sed 's/\s//'`
+		export MODREVISION=`grep REVISION "$MODDIR/$1.bmod" | cut -d: -f2 | sed 's/\s//'`
+		export DEPENDS=`grep REQUIRES "$MODDIR/$1.bmod" | cut -d: -f2 | sed 's/\s//' | sed 's/\s/\n/g'`
 	fi
 }
 
 
 load_module() {
-	if [ -n $1 -a -f $MODDIR/$1.bmod ]; then
-		get_headers $1
+	if [ -n "$1" -a -f "$MODDIR/$1.bmod" ]; then
+		get_headers "$1"
 		for i in $DEPENDS; do
-			if [ -n "`echo $LOADEDMODULES | grep $i`" ]; then
+			if [ -n "`echo $LOADEDMODULES | grep "$i"`" ]; then
 				continue
-			elif [ -f $MODDIR/$i.bmod ]; then
-				. $MODDIR/$i.bmod
+			elif [ -f "$MODDIR/$i.bmod/" ]; then
+				. "$MODDIR/$i.bmod"
 				echo -n "$i "
-				export LOADEDMODULES="$LOADEDMODULES $i"
+				local LOADEDMODULES="$LOADEDMODULES $i"
 			else
 				echo -n "$1[DEPERROR] "
-				export DEPERROR=1
+				local DEPERROR=1
 			fi
 		done
-		if [ ! "$DEPERROR" = "1" -a -z "`echo $LOADEDMODULES | grep $1`" ]; then
+		if [ ! "$DEPERROR" = "1" -a -z "`echo $LOADEDMODULES | grep "$1"`" ]; then
 			echo -n "$1 "
-			. $MODDIR/$1.bmod
+			. "$MODDIR/$1.bmod"
 		else
 			continue
 		fi
