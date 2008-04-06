@@ -3,25 +3,25 @@
 
 createdirs() {
 	if [ ! -d "$DESTDIR/etc/blackhole/" ]; then
-		mkdir -p $DESTDIR/etc/blackhole/
+		mkdir -p "$DESTDIR/etc/blackhole/"
 	fi
 	if [ ! -d "$PREFIX/bin" ]; then
-		mkdir -p $PREFIX/bin
+		mkdir -p "$PREFIX/bin"
 	fi
 	if [ ! -d "$PREFIX/share/blackhole" ]; then
-		mkdir -p $PREFIX/share/blackhole/{includes,modules}
+		mkdir -p "$PREFIX/share/blackhole/{includes,modules}"
 	else
 		if [ ! -d "$PREFIX/share/blackhole/includes" ]; then
-			mkdir $PREFIX/share/blackhole/includes
+			mkdir "$PREFIX/share/blackhole/includes"
 		elif [ ! -d "$PREFIX/share/blackhole/modules" ]; then
-			mkdir $PREFIX/share/blackhole/modules
+			mkdir "$PREFIX/share/blackhole/modules"
 		fi
 	fi
 }
 
 applyrules() {
 	if [ -n "$APPLY" ]; then
-		$PREFIX/bin/blackhole restart
+		"$PREFIX/bin/blackhole" restart
 	fi
 }
 
@@ -35,11 +35,11 @@ rcins()	{
 		else
 			echo "rc.firewall is referenced in rc.local, please edit rc.local"
 			echo "by hand, adding the line /etc/rc.d/rc.firewall start"
-			ln -sf $PREFIX/bin/blackhole $DESTDIR/etc/rc.d/rc.firewall
+			ln -sf "$PREFIX/bin/blackhole" "$DESTDIR/etc/rc.d/rc.firewall"
 		fi
 		;;
 		crux)
-			ln -sf $PREFIX/bin/blackhole $DESTDIR/etc/rc.d/blackhole
+			ln -sf "$PREFIX/bin/blackhole" "$DESTDIR/etc/rc.d/blackhole/"
 			echo "Please add blackhole to the startup array in /etc/rc.conf"
 		;;
 		*)

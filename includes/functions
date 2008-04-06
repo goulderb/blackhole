@@ -11,14 +11,14 @@ warn() {
 }
 
 failcheck()	{
-$@
-if [ $? = "1" ]; then
-	die "$1 exited with an error."
-elif [ $? = "2" ]; then
-	die "$1 exited with status 2."
-elif [ $? = "130" ]; then
-	die "$1 terminated by signal 2"
-elif [ $? = "137" ]; then
-	die "$1 terminated by signal 9"
-fi
+	$@
+	if [ $? = "1" ]; then
+		die "$1 exited with an error."
+	elif [ $? = "2" ]; then
+		die "$1 exited with status 2."
+	elif [ $? = "130" ]; then
+		die "$1 terminated by signal 2"
+	elif [ $? = "137" ]; then
+		die "$1 terminated by signal 9"
+	fi
 }
