@@ -23,7 +23,7 @@ if [ -f "$CONFDIR/ipblock-input.conf" -a ! "`cat $CONFDIR/ipblock-input.conf | w
 		fi
 
 		if [ -f "$CONFDIR/extopts.conf" ]; then
-			EXTOPTS="`grep "$PORT/input" "$CONFDIR/extopts.conf" | cut -d: -f2 | sed 's/\s//'`"
+			EXTOPTS="`grep "$PORT/input" "$CONFDIR/extopts.conf" | cut -d: -f2`"
 		fi
 
 		if [ -n "$PORT" -a "$PORT" = "all" -a -n "$PROTO" ]; then
@@ -59,7 +59,7 @@ if [ -f "$CONFDIR/ipblock-output.conf" -a ! "`cat $CONFDIR/ipblock-output.conf |
 		fi
 
 		if [ -f "$CONFDIR/extopts.conf" ]; then
-			EXTOPTS="`grep "$PORT/input" "$CONFDIR/extopts.conf" | cut -d: -f2 | sed 's/\s//'`"
+			EXTOPTS="`grep "$PORT/output" "$CONFDIR/extopts.conf" | cut -d: -f2`"
 		fi
 
 		if [ -n "$IPBLOCK_ALLOW_OUTBOUND_PING" ]; then

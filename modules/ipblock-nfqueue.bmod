@@ -22,7 +22,7 @@ for i in ${IPBLOCK_WHITELIST_IN[@]}; do
 	local PROTO="`echo $i | cut -d/ -f2`"
 	local DIRECTION="`echo $i | cut -d/ -f3`"
 	if [ -f "$CONFDIR/extopts.conf" ]; then
-		EXTOPTS="`grep "$PORT/input" "$CONFDIR/extopts.conf" | cut -d: -f2 | sed 's/\s//'`"
+		EXTOPTS="`grep "$PORT/input" "$CONFDIR/extopts.conf" | cut -d: -f2`"
 	fi
 	if [ "$DIRECTION" = "s" ]; then
 		PORT_OPTS="--sport "$PORT""
@@ -56,7 +56,7 @@ for i in ${IPBLOCK_WHITELIST_OUT[@]}; do
 	local PROTO="`echo $i | cut -d/ -f2`"
 	local DIRECTION="`echo $i | cut -d/ -f3`"
 	if [ -f "$CONFDIR/extopts.conf" ]; then
-		EXTOPTS="`grep "$PORT/input" "$CONFDIR/extopts.conf" | cut -d: -f2 | sed 's/\s//'`"
+		EXTOPTS="`grep "$PORT/output" "$CONFDIR/extopts.conf" | cut -d: -f2`"
 	fi
 	if [ "$DIRECTION" = "s" ]; then
 		PORT_OPTS="--sport "$PORT""
