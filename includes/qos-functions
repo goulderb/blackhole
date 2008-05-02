@@ -1,0 +1,43 @@
+# qos-functions
+# Written by: predatorfreak
+
+set_dev_arrays() {
+	for dev in `echo ${in_devices[*]}`; do
+		INPUT_DEVICES=("${INPUT_DEVICES[@]}" "$(echo $dev | cut -d'/' -f1)")
+		INPUT_SPEEDS_LINEMAX=("${INPUT_SPEEDS_LINEMAX[@]}" "$(echo $dev | cut -d'/' -f2)")
+		INPUT_SPEEDS_MAX=("${INPUT_SPEEDS_MAX[@]}" "$(echo $dev | cut -d'/' -f3)")
+		INPUT_SPEEDS_GUARANTEED=("${INPUT_SPEEDS_GUARANTEED[@]}" "$(echo $dev | cut -d'/' -f4)")
+	done
+	for dev in `echo ${out_devices[*]}`; do
+		OUTPUT_DEVICES=("${OUTPUT_DEVICES[@]}" "$(echo $dev | cut -d'/' -f1)")
+		OUTPUT_SPEEDS_LINEMAX=("${OUTPUT_SPEEDS_LINEMAX[@]}" "$(echo $dev | cut -d'/' -f2)")
+		OUTPUT_SPEEDS_MAX=("${OUTPUT_SPEEDS_MAX[@]}" "$(echo $dev | cut -d'/' -f3)")
+		OUTPUT_SPEEDS_GUARANTEED=("${OUTPUT_SPEEDS_GUARANTEED[@]}" "$(echo $dev | cut -d'/' -f4)")
+	done
+}
+
+set_class_arrays() {
+	for class in `echo ${in_classes[*]}`; do
+		INPUT_CLASSES=("${INPUT_CLASSES[@]}" "$(echo $class | cut -d'/' -f1)")
+		INPUT_DPORTS=("${INPUT_DPORTS[@]}" "$(echo $class | cut -d'/' -f2)")
+		INPUT_MARKS=("${INPUT_MARKS[@]}" "$(echo $class | cut -d'/' -f3)")
+		INPUT_PRIOR=("${INPUT_PRIOR[@]}" "$(echo $class | cut -d'/' -f3)")
+	done
+	for class in `echo ${out_classes[*]}`; do
+		OUTPUT_CLASSES=("${OUTPUT_CLASSES[@]}" "$(echo $class | cut -d'/' -f1)")
+		OUTPUT_DPORTS=("${OUTPUT_DPORTS[@]}" "$(echo $class | cut -d'/' -f2)")
+		OUTPUT_MARKS=("${OUTPUT_MARKS[@]}" "$(echo $class | cut -d'/' -f3)")
+		OUTPUT_PRIOR=("${OUTPUT_PRIOR[@]}" "$(echo $class | cut -d'/' -f3)")
+	done
+}
+
+set_limit_arrays() {
+	for limit in `echo ${in_limits[*]}`; do
+		INPUT_LCLASS=("${INPUT_LCLASS[@]}" "$(echo $limit | cut -d'/' -f1)")
+		INPUT_LIMIT=("${INPUT_LIMIT[@]}" "$(echo $limit | cut -d'/' -f2)")
+	done
+	for limit in `echo ${out_limits[*]}`; do
+		OUTPUT_LCLASS=("${OUTPUT_LCLASS[@]}" "$(echo $limit | cut -d'/' -f1)")
+		OUTPUT_LIMIT=("${OUTPUT_LIMIT[@]}" "$(echo $limit | cut -d'/' -f2)")
+	done
+}
