@@ -16,12 +16,12 @@ else
 	iptables -A OUTPUT -o $EXTIF -m state --state ESTABLISHED,RELATED -j ACCEPT
 fi
 if [ -z "$CORE_IP_DYNAMIC" ]; then
-	echo 1 > /proc/sys/net/ipv4/ip_dynaddr
+	sysctl net.ipv4.ip_dynaddr=1
 else
-	echo 0 > /proc/sys/net/ipv4/ip_dynaddr
+	sysctl net.ipv4.ip_dynaddr=0
 fi
 if [ -z "$CORE_NAT_ENABLE" ]; then
-	echo 1 > /proc/sys/net/ipv4/ip_forward
+	sysctl net.ipv4.ip_forward=1
 	iptables -A FORWARD -i $EXTIF -o $INTIF -m state --state ESTABLISHED,RELATED -j ACCEPT
 	if [ -z "$CORE_DEFAULT_DENY_OUTBOUND" ]; then
 		iptables -A FORWARD -i $INTIF -o $EXTIF -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
@@ -34,5 +34,5 @@ if [ -z "$CORE_NAT_ENABLE" ]; then
 		iptables -t nat -A POSTROUTING -o $EXTIF -j SNAT --to-source $EXTIP
 	fi
 else
-	echo 0 > /proc/sys/net/ipv4/ip_forward
+	sysctl net.ipv4.ip_forward=0
 fi
