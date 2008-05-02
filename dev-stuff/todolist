@@ -1,4 +1,5 @@
 Blackhole to do list for later versions:
-Required for 3.0: Document blackhole and all shipped modules.
-Required for 3.0: Write an article on how to use the new input/output-allow modules.
-Highly desired for 3.0: Implement more features/modules from the idea list.
+Required for 3.0: Port forwarding for NAT
+Required for 3.0: DMZ for NAT
+Highly desired for 3.0: Traffic shaping.
+Highly desired for future: Implement more features/modules from the idea list.
