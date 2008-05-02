@@ -4,7 +4,7 @@
 # REQUIRES:
 
 iptables -N FLOOD
-iptables -A INPUT -j FLOOD
+iptables -A INPUT -i $EXTIF -j FLOOD
 iptables -A FLOOD -p tcp --tcp-flags SYN,ACK,FIN,RST RST \
 	-m limit --limit 15/second --limit-burst 5 -m recent --update --seconds 60 -j $DROP
 iptables -A FLOOD -p icmp --icmp-type echo-request \

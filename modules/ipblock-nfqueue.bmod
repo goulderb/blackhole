@@ -3,17 +3,17 @@
 # NAME: ipblock-nfqueue
 # REQUIRES:
 
-if [ $NFQUEUE_IPBLOCK_PROG = "moblock" ]; then
+if [ "$IPBLOCK_PROGRAM" = "moblock" ]; then
 	export CHAIN_IN="MOBLOCK_IN"
 	export CHAIN_OUT="MOBLOCK_OUT"
-elif [ $NFQUEUE_IPBLOCK_PROG = "iplist" ]; then
+elif [ "$IPBLOCK_PROGRAM" = "iplist" ]; then
 	export CHAIN_IN="IPLIST_IN"
 	export CHAIN_OUT="IPLIST_OUT"
 fi
 
 iptables -N $CHAIN_IN
 iptables -N $CHAIN_OUT
-iptables -A INPUT -p all -m state --state NEW -j $CHAIN_IN
+iptables -A INPUT -i $EXTIF -p all -m state --state NEW -j $CHAIN_IN
 if [ -n "$IPBLOCK_ALLOW_OUTBOUND_PING" ]; then
 	iptables -A $CHAIN_IN -p icmp --icmp-type 0 -j RETURN
 fi
@@ -36,17 +36,17 @@ for i in ${IPBLOCK_WHITELIST_IN[@]}; do
 	iptables -A $CHAIN_IN -p "$PROTO" $PORT_OPTS $EXTOPTS -j RETURN
 done
 
-if [ $NFQUEUE_IPBLOCK_PROG = "moblock" ]; then
+if [ "$IPBLOCK_PROGRAM" = "moblock" ]; then
 	iptables -A $CHAIN_IN -p all -j NFQUEUE
-elif [ $NFQUEUE_IPBLOCK_PROG = "iplist" ]; then
+elif [ "$IPBLOCK_PROGRAM" = "iplist" ]; then
 	iptables -A $CHAIN_IN -p all -m mark --mark 2 -j $DROP
 	iptables -A $CHAIN_IN -p all -m mark ! --mark 1 -j NFQUEUE
 fi
 
 if [ -n "$IPBLOCK_ALLOW_OUTBOUND_FTP" ]; then
-	iptables -A OUTPUT -p all -m state --state NEW,ESTABLISHED,RELATED -j $CHAIN_OUT
+	iptables -A OUTPUT -o $INTIF -p all -m state --state NEW,ESTABLISHED,RELATED -j $CHAIN_OUT
 else
-	iptables -A OUTPUT -p all -m state --state NEW -j $CHAIN_OUT
+	iptables -A OUTPUT -o $INTIF -p all -m state --state NEW -j $CHAIN_OUT
 fi
 if [ -n "$IPBLOCK_ALLOW_OUTBOUND_PING" ]; then
 	iptables -A $CHAIN_OUT -p icmp --icmp-type 8 -j RETURN
@@ -87,9 +87,9 @@ if [ -n "$IPBLOCK_ALLOW_OUTBOUND_FTP" ]; then
 	iptables -A $CHAIN_OUT -p all -m state --state ESTABLISHED,RELATED -j RETURN
 fi
 
-if [ $IPBLOCK_PROG = "moblock" ]; then
+if [ "$IPBLOCK_PROGRAM" = "moblock" ]; then
 	iptables -A $CHAIN_IN -p all -j NFQUEUE
-elif [ $IPBLOCK_PROG = "iplist" ]; then
+elif [ "$IPBLOCK_PROGRAM" = "iplist" ]; then
 	iptables -A $CHAIN_OUT -p all -m mark --mark 2 -j $DROP
 	iptables -A $CHAIN_OUT -p all -m mark ! --mark 1 -j NFQUEUE
 fi

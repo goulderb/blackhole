@@ -5,7 +5,7 @@
 
 if [ -n "${INPUT_ALLOW[*]}" ]; then
 	iptables -N INPUT_ALLOW
-	iptables -A INPUT -j INPUT_ALLOW
+	iptables -A INPUT -i $EXTIF -j INPUT_ALLOW
 	for i in ${INPUT_ALLOW[@]}; do
 		local PORT=`echo $i | cut -d/ -f1`
 		local PROTO=`echo $i | cut -d/ -f2`

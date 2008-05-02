@@ -5,7 +5,7 @@
 
 if [ -n "${BRUTEFORCE_DEFEAT[*]}" ]; then
 	iptables -N BRUTEFORCE_DEFEAT
-	iptables -A INPUT -j BRUTEFORCE_DEFEAT
+	iptables -A INPUT -i $EXTIF -j BRUTEFORCE_DEFEAT
 	for i in ${BRUTEFORCE_WHITELIST[@]}; do
 		iptables -A BRUTEFORCE_DEFEAT -s "$i" -j RETURN
 	done

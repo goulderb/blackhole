@@ -5,7 +5,7 @@
 
 if [ -f "$CONFDIR/ipblock-input.conf" -a ! "`cat $CONFDIR/ipblock-input.conf | wc -l`" = 0 ]; then
 	iptables -N IPBLOCK_IN
-	iptables -A INPUT -p all -m state --state NEW -j IPBLOCK_IN
+	iptables -A INPUT -i $EXTIF -p all -m state --state NEW -j IPBLOCK_IN
 	for i in `cat $CONFDIR/ipblock-input.conf`; do
 		local IP="`echo $i | cut -d/ -f1`"
 		local PORT="`echo $i | cut -d/ -f2`"
@@ -38,9 +38,9 @@ fi
 if [ -f "$CONFDIR/ipblock-output.conf" -a ! "`cat $CONFDIR/ipblock-output.conf | wc -l`" = 0 ]; then
 	iptables -N IPBLOCK_OUT
 	if [ -n "$IPBLOCK_ALLOW_OUTBOUND_FTP" ]; then
-		iptables -A OUTPUT -p all -m state --state NEW,ESTABLISHED,RELATED -j IPBLOCK_OUT
+		iptables -A OUTPUT -o $INTIF -p all -m state --state NEW,ESTABLISHED,RELATED -j IPBLOCK_OUT
 	else
-		iptables -A OUTPUT -p all -m state --state NEW -j IPBLOCK_OUT
+		iptables -A OUTPUT -o $INTIF -p all -m state --state NEW -j IPBLOCK_OUT
 	fi
 	for i in `cat $CONFDIR/ipblock-input.conf`; do
 		local IP="`echo $i | cut -d/ -f1`"

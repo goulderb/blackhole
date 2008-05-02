@@ -5,7 +5,7 @@
 
 if [ -n "${OUTPUT_ALLOW[*]}" ]; then
 	iptables -N OUTPUT_ALLOW
-	iptables -A OUTPUT -j OUTPUT_ALLOW
+	iptables -A OUTPUT -o $INTIF -j OUTPUT_ALLOW
 	for i in ${OUTPUT_ALLOW[@]}; do
 		local PORT=`echo $i | cut -d/ -f1`
 		local PROTO=`echo $i | cut -d/ -f2`
