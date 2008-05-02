@@ -63,6 +63,7 @@ start)
 ;;
 stop)
 	iptables -F
+	iptables -t nat -F
 	iptables -P INPUT ACCEPT
 	iptables -P FORWARD ACCEPT
 	iptables -P OUTPUT ACCEPT

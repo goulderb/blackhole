@@ -8,10 +8,31 @@ iptables -P FORWARD DROP
 iptables -P OUTPUT DROP
 iptables -I INPUT 1 -i lo -j ACCEPT
 iptables -I OUTPUT 1 -o lo -j ACCEPT
-iptables -A INPUT -p tcp ! --syn -m state --state NEW -j $DROP
-iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -A INPUT -i $EXTIF -p tcp ! --syn -m state --state NEW -j $DROP
+iptables -A INPUT -i $EXTIF -m state --state ESTABLISHED,RELATED -j ACCEPT
 if [ -z "$CORE_DEFAULT_DENY_OUTBOUND" ]; then
-	iptables -A OUTPUT -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+	iptables -A OUTPUT -o $EXTIF -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 else
-	iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+	iptables -A OUTPUT -o $EXTIF -m state --state ESTABLISHED,RELATED -j ACCEPT
+fi
+if [ -z "$CORE_IP_DYNAMIC" ]; then
+	echo 1 > /proc/sys/net/ipv4/ip_dynaddr
+else
+	echo 0 > /proc/sys/net/ipv4/ip_dynaddr
+fi
+if [ -z "$CORE_NAT_ENABLE" ]; then
+	echo 1 > /proc/sys/net/ipv4/ip_forward
+	iptables -A FORWARD -i $EXTIF -o $INTIF -m state --state ESTABLISHED,RELATED -j ACCEPT
+	if [ -z "$CORE_DEFAULT_DENY_OUTBOUND" ]; then
+		iptables -A FORWARD -i $INTIF -o $EXTIF -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+	else
+		iptables -A FORWARD -i $INTIF -o $EXTIF -m state --state ESTABLISHED,RELATED -j ACCEPT
+	fi
+	if [ -z "$CORE_IP_DYNAMIC" ]; then
+		iptables -t nat -A POSTROUTING -o $EXTIF -j MASQUERADE
+	else
+		iptables -t nat -A POSTROUTING -o $EXTIF -j SNAT --to-source $EXTIP
+	fi
+else
+	echo 0 > /proc/sys/net/ipv4/ip_forward
 fi
