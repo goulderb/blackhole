@@ -18,21 +18,25 @@ else
 	exit 1
 fi
 
-if [ -d "$PREFIX"/share/blackhole/modules -a -f "$PREFIX"/share/blackhole/modules/core.bmod ]; then
-	MODDIR="$PREFIX/share/blackhole/modules"
+if [ -d "$PREFIX"/share/blackhole/modules -a -f "$PREFIX"/share/blackhole/modules/core.bmod ] \
+	&& [ -f "$PWD"/.bhdev ]; then
+	export MODDIR="$PREFIX/share/blackhole/modules"
 elif [ -d "$PWD"/modules -a -f "$PWD"/modules/core.bmod ]; then
-	MODDIR="$PWD/modules"
+	export MODDIR="$PWD/modules"
 else
 	echo "ERROR: Modules directory doesn't exist, dieing."
 	exit 1
 fi
 
-if [ -f "$PREFIX"/share/blackhole/includes/module-functions -a -f "$PREFIX"/share/blackhole/includes/functions ]; then
+if [ -f "$PREFIX"/share/blackhole/includes/module-functions -a -f "$PREFIX"/share/blackhole/includes/functions ] \
+	&& [ -f "$PWD"/.bhdev ]; then
 	. "$PREFIX"/share/blackhole/includes/module-functions
 	. "$PREFIX"/share/blackhole/includes/functions
+	export INCDIR=""$PREFIX"/share/blackhole/includes/"
 elif [ -f "$PWD"/includes/module-functions -a -f "$PWD"/includes/functions ]; then
 	. "$PWD"/includes/module-functions
 	. "$PWD"/includes/functions
+	export INCDIR=""$PWD"/includes"
 else
 	echo "ERROR: Couldn't find the requried includes, dieing."
 	exit 1
