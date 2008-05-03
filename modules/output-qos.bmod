@@ -26,11 +26,28 @@ if [ -n "${OUTPUT_QOS[@]}" ]; then
 	tc filter add dev $EXTIF parent 1:0 prio 0 protocol ip handle 50 fw flowid 1:50
 	iptables -t mangle -N QOS-OUT
 	iptables -t mangle -I POSTROUTING -o $EXTIF -j QOS-OUT
-
-	#for RULE in ${QOS_OUT_RULES[@]}; then
-	#	iptables -t mangle -A QOS-OUT -p $PROTO --dport $OPTS -m mark --mark 0 -j MARK --set-mark $MARK
-	#done
-
+	for rule in ${QOS_OUT_RULES[@]}; do
+		QOS_items=("$rule")
+		for item in ${QOS_items[@]}; do
+			QOS_VALUE="`echo $item | cut -d'=' -f1`"
+			case $item in
+				protocol=*)
+					PROTOCOL="$item"
+				;;
+				sport=*)
+					SPORT="--sport $item"
+				;;
+				dport=*)
+					DPORT="--sport $item"
+				;;
+				mark=*)
+					MARK="$item"
+				;;
+			esac
+		done
+		iptables -t mangle -A QOS-OUT -p $PROTOCOL $SPORT $DPORT -m mark --mark 0 -j MARK --set-mark $MARK
+		unset PROTOCOL SPORT DPORT MARK QOS_items QOS_VALUE
+	done
 	iptables -t mangle -A QOS-OUT -p tcp -m tos --tos Minimize-Delay -m mark --mark 0 -j MARK --set-mark 10
 	iptables -t mangle -A QOS-OUT -p tcp -m tos --tos Maximize-Throughput -m mark --mark 0 -j MARK --set-mark 20
 	iptables -t mangle -A QOS-OUT -p tcp -m tos --tos Maximize-Reliability -m mark --mark 0 -j MARK --set-mark 30
