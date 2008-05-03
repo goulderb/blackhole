@@ -42,7 +42,7 @@ if [ -n "${OUTPUT_QOS[@]}" ]; then
 					SPORT="--sport $QOS_VALUE"
 				;;
 				dport=*)
-					DPORT="--sport $QOS_VALUE"
+					DPORT="--dport $QOS_VALUE"
 				;;
 				mark=*)
 					MARK="$QOS_VALUE"

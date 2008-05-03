@@ -36,7 +36,7 @@ if [ -f "$PREFIX"/share/blackhole/includes/module-functions -a -f "$PREFIX"/shar
 elif [ -f "$PWD"/includes/module-functions -a -f "$PWD"/includes/functions ]; then
 	. "$PWD"/includes/module-functions
 	. "$PWD"/includes/functions
-	export INCDIR=""$PWD"/includes"
+	export INCDIR="$PWD/includes"
 else
 	echo "ERROR: Couldn't find the requried includes, dieing."
 	exit 1
@@ -81,5 +81,8 @@ restart)
 	$0 stop
 	sleep 2
 	$0 start
+;;
+*)
+	echo "usage: $0 [start|stop|restart]"
 ;;
 esac
