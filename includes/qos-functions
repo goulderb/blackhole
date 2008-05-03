@@ -1,43 +1,221 @@
 # qos-functions
-# Written by: predatorfreak
+# Written by: predatorfreak and Romster
 
-set_dev_arrays() {
-	for dev in `echo ${in_devices[*]}`; do
-		INPUT_DEVICES=("${INPUT_DEVICES[@]}" "$(echo $dev | cut -d'/' -f1)")
-		INPUT_SPEEDS_LINEMAX=("${INPUT_SPEEDS_LINEMAX[@]}" "$(echo $dev | cut -d'/' -f2)")
-		INPUT_SPEEDS_MAX=("${INPUT_SPEEDS_MAX[@]}" "$(echo $dev | cut -d'/' -f3)")
-		INPUT_SPEEDS_GUARANTEED=("${INPUT_SPEEDS_GUARANTEED[@]}" "$(echo $dev | cut -d'/' -f4)")
-	done
-	for dev in `echo ${out_devices[*]}`; do
-		OUTPUT_DEVICES=("${OUTPUT_DEVICES[@]}" "$(echo $dev | cut -d'/' -f1)")
-		OUTPUT_SPEEDS_LINEMAX=("${OUTPUT_SPEEDS_LINEMAX[@]}" "$(echo $dev | cut -d'/' -f2)")
-		OUTPUT_SPEEDS_MAX=("${OUTPUT_SPEEDS_MAX[@]}" "$(echo $dev | cut -d'/' -f3)")
-		OUTPUT_SPEEDS_GUARANTEED=("${OUTPUT_SPEEDS_GUARANTEED[@]}" "$(echo $dev | cut -d'/' -f4)")
+qos_rate() {
+	local DIRECTION ITEM VALUE TYPE
+	DIRECTION="$1"
+	ITEM="`echo $2 | cut -d'=' -f0`"
+	VALUE="`echo $2 | cut -d'=' -f1 | sed -e 's/\(^[0-9]{1,3}\).*$/\1/'`"
+	TYPE="`echo $2 | cut -d'=' -f1 | sed -e 's/^[0-9]{1,3}\(.*\)$/\1/'`"
+	if [ ! $VALUE -eq $VALUE 2> /dev/null ]; then
+		error "$DIRECTION QoS $ITEM value is not a number!"
+	fi
+	if [ $TYPE = 'kbit/s' ]; then
+		if [ $VALUE -gt 0 ] && [ $VALUE -lt $QOS_OUT_RATE_MASTER ]; then
+			RESULT="$VALUE"
+			return 0
+		else
+			error "$DIRECTION QoS $ITEM value out of range."
+		fi
+	elif [ $TYPE = '%' ]; then
+		if [ $VALUE -gt 0 ] && [ $VALUE -lt 100 ]; then
+			RESULT="$[$VALUE * $QOS_OUT_RATE_MASTER / 100]"
+			return 0
+		else
+			error "$DIRECTION QoS $ITEM value out of range."
+		fi
+	fi
+	return 1
+}
+
+set_rate_line() {
+	local ITEM VALUE TYPE
+	if [ -z "$out_rate_line" ]; then
+		error 'QoS out_rate_line not set.'
+	fi
+	ITEM="`echo "$out_rate_line" | cut -d'=' -f0`"
+	VALUE="`echo "$out_rate_line" | cut -d'=' -f1 | sed -e 's/\(^[0-9]{1,3}\).*$/\1/'`"
+	TYPE="`echo "$out_rate_line" | cut -d'=' -f1 | sed -e 's/^[0-9]{1,3}\(.*\)$/\1/'`"
+	if [ ! $VALUE -eq $VALUE 2> /dev/null ]; then
+		error "Output QoS $ITEM value is not a number!"
+	fi
+	if [ $TYPE = 'kbit/s' ]; then
+		if [ $VALUE -gt 0 ]; then
+			RESULT="$VALUE"
+			return 0
+		else
+			error 'QoS out_rate_line value can not be zero.'
+		fi
+	else
+		error 'QoS out_rate_line type unsupported.'
+	fi
+	return 1
+}
+
+set_rate_guaranteed() {
+	local ITEM
+	if [ -z "$out_rate_guaranteed" ]; then
+		error 'QoS out_rate_guaranteed is not set.'
+	fi
+	if [ "${out_rate_guaranteed[0]}" -gt 5 ]; then
+		error 'QoS: out_rate_guaranteed too many parameters.'
+	fi
+	for item in `echo ${out_rate_guaranteed[@]}`; do
+		case $ITEM in
+			realtime=*)
+				qos_rate 'Output' "$ITEM"
+				if [ ! $? -gt 0 ]; then
+					QOS_OUT_RATE[1]="$RESULT"
+				else
+					error "qos_rate() did someting naughty."
+				fi
+			;;
+			high=*)
+				qos_rate 'Output' "$ITEM"
+				if [ ! $? -gt 0 ]; then
+					QOS_OUT_RATE[2]="$RESULT"
+				else
+					error "qos_rate() did something naughty."
+				fi
+			;;
+			medium=*)
+				qos_rate 'Output' "$ITEM"
+				if [ ! $? -gt 0 ]; then
+					QOS_OUT_RATE[3]="$RESULT"
+				else
+					error "qos_rate() did something naughty."
+				fi
+			;;
+			low=*)
+				qos_rate 'Output' "$ITEM"
+				if [ ! $? -gt 0 ]; then
+					QOS_OUT_RATE[4]="$RESULT"
+				else
+					error "qos_rate() did something naughty."
+				fi
+			;;
+			bulk=*)
+				qos_rate 'Output' "$ITEM"
+				if [ ! $? -gt 0 ]; then
+					QOS_OUT_RATE[5]="$RESULT"
+				else
+					error "qos_rate() did something naughty."
+				fi
+			;;
+			*)
+				error "Output QoS unknown item $ITEM"
+			;;
+		esac
 	done
 }
 
-set_class_arrays() {
-	for class in `echo ${in_classes[*]}`; do
-		INPUT_CLASSES=("${INPUT_CLASSES[@]}" "$(echo $class | cut -d'/' -f1)")
-		INPUT_DPORTS=("${INPUT_DPORTS[@]}" "$(echo $class | cut -d'/' -f2)")
-		INPUT_MARKS=("${INPUT_MARKS[@]}" "$(echo $class | cut -d'/' -f3)")
-		INPUT_PRIOR=("${INPUT_PRIOR[@]}" "$(echo $class | cut -d'/' -f3)")
+set_rate_max() {
+	local ITEM
+	if [ -z "$out_rate_max" ]; then
+		error 'QoS out_rate_guaranteed is not set.'
+	fi
+	if [ "${out_rate_max[0]}" -gt 5 ]; then
+		error 'QoS: out_rate_max too many parameters.'
+	fi
+	for item in `echo ${out_rate_max[@]}`; do
+		case $ITEM in
+			realtime=*)
+				qos_rate 'Output' "$ITEM"
+				if [ ! $? -gt 0 ]; then
+					QOS_OUT_ULRATE[1]="$RESULT"
+				else
+					error "qos_rate() did someting naughty."
+				fi
+			;;
+			high=*)
+				qos_rate 'Output' "$ITEM"
+				if [ ! $? -gt 0 ]; then
+					QOS_OUT_ULRATE[2]="$RESULT"
+				else
+					error "qos_rate() did something naughty."
+				fi
+			;;
+			medium=*)
+				qos_rate 'Output' "$ITEM"
+				if [ ! $? -gt 0 ]; then
+					QOS_OUT_ULRATE[3]="$RESULT"
+				else
+					error "qos_rate() did something naughty."
+				fi
+			;;
+			low=*)
+				qos_rate 'Output' "$ITEM"
+				if [ ! $? -gt 0 ]; then
+					QOS_OUT_ULRATE[4]="$RESULT"
+				else
+					error "qos_rate() did something naughty."
+				fi
+			;;
+			bulk=*)
+				qos_rate 'Output' "$ITEM"
+				if [ ! $? -gt 0 ]; then
+					QOS_OUT_ULRATE[5]="$RESULT"
+				else
+					error "qos_rate() did something naughty."
+				fi
+			;;
+			*)
+				error "Output QoS unknown item $ITEM"
+			;;
+		esac
 	done
-	for class in `echo ${out_classes[*]}`; do
-		OUTPUT_CLASSES=("${OUTPUT_CLASSES[@]}" "$(echo $class | cut -d'/' -f1)")
-		OUTPUT_DPORTS=("${OUTPUT_DPORTS[@]}" "$(echo $class | cut -d'/' -f2)")
-		OUTPUT_MARKS=("${OUTPUT_MARKS[@]}" "$(echo $class | cut -d'/' -f3)")
-		OUTPUT_PRIOR=("${OUTPUT_PRIOR[@]}" "$(echo $class | cut -d'/' -f3)")
-	done
-}
-
-set_limit_arrays() {
-	for limit in `echo ${in_limits[*]}`; do
-		INPUT_LCLASS=("${INPUT_LCLASS[@]}" "$(echo $limit | cut -d'/' -f1)")
-		INPUT_LIMIT=("${INPUT_LIMIT[@]}" "$(echo $limit | cut -d'/' -f2)")
-	done
-	for limit in `echo ${out_limits[*]}`; do
-		OUTPUT_LCLASS=("${OUTPUT_LCLASS[@]}" "$(echo $limit | cut -d'/' -f1)")
-		OUTPUT_LIMIT=("${OUTPUT_LIMIT[@]}" "$(echo $limit | cut -d'/' -f2)")
+	unset ITEM
+	if [ -z "$in_rate_max" ]; then
+		error 'QoS out_rate_guaranteed is not set.'
+	fi
+	if [ "${in_rate_max[0]}" -gt 5 ]; then
+		error 'QoS: in_rate_max too many parameters.'
+	fi
+	for item in `echo ${in_rate_max[@]}`; do
+		case $ITEM in
+			realtime=*)
+				qos_rate 'Input' "$ITEM"
+				if [ ! $? -gt 0 ]; then
+					QOS_IN_ULRATE[1]="$RESULT"
+				else
+					error "qos_rate() did someting naughty."
+				fi
+			;;
+			high=*)
+				qos_rate 'Input' "$ITEM"
+				if [ ! $? -gt 0 ]; then
+					QOS_IN_ULRATE[2]="$RESULT"
+				else
+					error "qos_rate() did something naughty."
+				fi
+			;;
+			medium=*)
+				qos_rate 'Input' "$ITEM"
+				if [ ! $? -gt 0 ]; then
+					QOS_IN_ULRATE[3]="$RESULT"
+				else
+					error "qos_rate() did something naughty."
+				fi
+			;;
+			low=*)
+				qos_rate 'Input' "$ITEM"
+				if [ ! $? -gt 0 ]; then
+					QOS_IN_ULRATE[4]="$RESULT"
+				else
+					error "qos_rate() did something naughty."
+				fi
+			;;
+			bulk=*)
+				qos_rate 'Input' "$ITEM"
+				if [ ! $? -gt 0 ]; then
+					QOS_IN_ULRATE[5]="$RESULT"
+				else
+					error "qos_rate() did something naughty."
+				fi
+			;;
+			*)
+				error "Input QoS unknown item $ITEM"
+			;;
+		esac
 	done
 }
