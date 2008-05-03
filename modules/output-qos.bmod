@@ -1,0 +1,35 @@
+
+if [ -n "${OUTPUT_QOS[@]}" ]; then
+	source "$CONFDIR/qos.conf"
+	source "$INCDIR/qos-includes"
+	ip link set txqueuelen 30 $EXTIF
+	tc qdisc add dev $EXTIF handle 1:0 root hfsc default 50
+	tc class add dev $EXTIF parent 1:0 classid 1:1 hfsc sc rate ${QOS_OUT_RATE_MASTER}kbit ul rate ${QOS_OUT_RATE_MASTER}kbit
+	tc class add dev $EXTIF parent 1:1 classid 1:10 hfsc sc umax 1500b dmax ${QOS_OUT_DELAY[1]}ms rate ${QOS_OUT_RATE[1]}kbit ul rate ${QOS_OUT_ULRATE[1]}kbit
+	tc class add dev $EXTIF parent 1:1 classid 1:20 hfsc sc umax 1500b dmax ${QOS_OUT_DELAY[2]}ms rate ${QOS_OUT_RATE[2]}kbit ul rate ${QOS_OUT_ULRATE[2]}kbit
+	tc class add dev $EXTIF parent 1:1 classid 1:30 hfsc sc umax 1500b dmax ${QOS_OUT_DELAY[3]}ms rate ${QOS_OUT_RATE[3]}kbit ul rate ${QOS_OUT_ULRATE[3]}kbit
+	tc class add dev $EXTIF parent 1:1 classid 1:40 hfsc sc umax 1500b dmax ${QOS_OUT_DELAY[4]}ms rate ${QOS_OUT_RATE[4]}kbit ul rate ${QOS_OUT_ULRATE[4]}kbit
+	tc class add dev $EXTIF parent 1:1 classid 1:50 hfsc sc umax 1500b dmax ${QOS_OUT_DELAY[5]}ms rate ${QOS_OUT_RATE[5]}kbit ul rate ${QOS_OUT_ULRATE[5]}kbit
+	tc qdisc add dev $EXTIF parent 1:10 handle 10: sfq perturb 10
+	tc qdisc add dev $EXTIF parent 1:20 handle 20: sfq perturb 10
+	tc qdisc add dev $EXTIF parent 1:30 handle 30: sfq perturb 10
+	tc qdisc add dev $EXTIF parent 1:40 handle 40: sfq perturb 10
+	tc qdisc add dev $EXTIF parent 1:50 handle 50: sfq perturb 10
+	tc filter add dev $EXTIF parent 1:0 prio 0 protocol ip handle 10 fw flowid 1:10
+	tc filter add dev $EXTIF parent 1:0 prio 0 protocol ip handle 20 fw flowid 1:20
+	tc filter add dev $EXTIF parent 1:0 prio 0 protocol ip handle 30 fw flowid 1:30
+	tc filter add dev $EXTIF parent 1:0 prio 0 protocol ip handle 40 fw flowid 1:40
+	tc filter add dev $EXTIF parent 1:0 prio 0 protocol ip handle 50 fw flowid 1:50
+	iptables -t mangle -N QOS-OUT
+	iptables -t mangle -I POSTROUTING -o $EXTIF -j QOS-OUT
+
+	#for RULE in ${QOS_OUT_RULES[@]}; then
+	#	iptables -t mangle -A QOS-OUT -p $PROTO --dport $OPTS -m mark --mark 0 -j MARK --set-mark $MARK
+	#done
+
+	iptables -t mangle -A QOS-OUT -p tcp -m tos --tos Minimize-Delay -m mark --mark 0 -j MARK --set-mark 10
+	iptables -t mangle -A QOS-OUT -p tcp -m tos --tos Maximize-Throughput -m mark --mark 0 -j MARK --set-mark 20
+	iptables -t mangle -A QOS-OUT -p tcp -m tos --tos Maximize-Reliability -m mark --mark 0 -j MARK --set-mark 30
+	iptables -t mangle -A QOS-OUT -p tcp -m tos --tos Minimize-Cost -m mark --mark 0 -j MARK --set-mark 40
+	iptables -t mangle -A QOS-OUT -p tcp -m tos --tos Normal-Service -m mark --mark 0 -j MARK --set-mark 50
+fi
