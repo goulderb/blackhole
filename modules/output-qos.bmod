@@ -1,3 +1,7 @@
+# VERSION: 0.1
+# REVISION: 0
+# NAME: output-qos
+# REQUIRES:
 
 if [ -n "${OUTPUT_QOS[@]}" ]; then
 	source "$CONFDIR/qos.conf"
