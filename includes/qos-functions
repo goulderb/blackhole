@@ -4,25 +4,25 @@
 qos_rate() {
 	local DIRECTION ITEM VALUE TYPE
 	DIRECTION="$1"
-	ITEM="`echo $2 | cut -d'=' -f0`"
-	VALUE="`echo $2 | cut -d'=' -f1 | sed -e 's/\(^[0-9]{1,3}\).*$/\1/'`"
-	TYPE="`echo $2 | cut -d'=' -f1 | sed -e 's/^[0-9]{1,3}\(.*\)$/\1/'`"
-	if [ ! $VALUE -eq $VALUE 2> /dev/null ]; then
-		error "$DIRECTION QoS $ITEM value is not a number!"
+	ITEM="`echo $2`"
+	VALUE="`echo $2 | cut -d'=' -f2 | sed -e 's:[a-z]::g' -e 's:/::g' -e 's:%::g'`"
+	TYPE="`echo $2 | cut -d'=' -f2 | sed -e 's/[0-9]//g'`"
+	if [ ! "$VALUE" -eq "$VALUE" 2> /dev/null ]; then
+		die "$DIRECTION QoS $ITEM value is not a number!"
 	fi
-	if [ $TYPE = 'kbit/s' ]; then
-		if [ $VALUE -gt 0 ] && [ $VALUE -lt $QOS_OUT_RATE_MASTER ]; then
+	if [ "$TYPE" = 'kbit/s' ]; then
+		if [ "$VALUE" -gt 0 ] && [ "$VALUE" -lt "$QOS_OUT_RATE_MASTER" ]; then
 			RESULT="$VALUE"
 			return 0
 		else
-			error "$DIRECTION QoS $ITEM value out of range."
+			die "$DIRECTION QoS $ITEM value out of range."
 		fi
-	elif [ $TYPE = '%' ]; then
-		if [ $VALUE -gt 0 ] && [ $VALUE -lt 100 ]; then
-			RESULT="$[$VALUE * $QOS_OUT_RATE_MASTER / 100]"
+	elif [ "$TYPE" = '%' ]; then
+		if [ "$VALUE" -gt 0 ] && [ "$VALUE" -lt 100 ]; then
+			RESULT="$[$VALUE * 400 / 100]"
 			return 0
 		else
-			error "$DIRECTION QoS $ITEM value out of range."
+			die "$DIRECTION QoS $ITEM value out of range."
 		fi
 	fi
 	return 1
@@ -31,23 +31,23 @@ qos_rate() {
 set_rate_line() {
 	local ITEM VALUE TYPE
 	if [ -z "$out_rate_line" ]; then
-		error 'QoS out_rate_line not set.'
+		die 'QoS out_rate_line not set.'
 	fi
-	ITEM="`echo "$out_rate_line" | cut -d'=' -f0`"
-	VALUE="`echo "$out_rate_line" | cut -d'=' -f1 | sed -e 's/\(^[0-9]{1,3}\).*$/\1/'`"
-	TYPE="`echo "$out_rate_line" | cut -d'=' -f1 | sed -e 's/^[0-9]{1,3}\(.*\)$/\1/'`"
-	if [ ! $VALUE -eq $VALUE 2> /dev/null ]; then
-		error "Output QoS $ITEM value is not a number!"
+	ITEM="`echo "$out_rate_line"`"
+	VALUE="`echo "$out_rate_line" | sed -e 's:[a-z]::g' -e 's:/::g'`"
+	TYPE="`echo "$out_rate_line" | sed 's/[0-9]//g'`"
+	if [ ! "$VALUE" -eq "$VALUE" 2> /dev/null ]; then
+		die "Output QoS $ITEM value is not a number!"
 	fi
-	if [ $TYPE = 'kbit/s' ]; then
-		if [ $VALUE -gt 0 ]; then
-			RESULT="$VALUE"
+	if [ "$TYPE" = 'kbit/s' ]; then
+		if [ "$VALUE" -gt 0 ]; then
+			echo "$VALUE"
 			return 0
 		else
-			error 'QoS out_rate_line value can not be zero.'
+			die 'QoS out_rate_line value can not be zero.'
 		fi
 	else
-		error 'QoS out_rate_line type unsupported.'
+		die 'QoS out_rate_line type unsupported.'
 	fi
 	return 1
 }
@@ -55,19 +55,19 @@ set_rate_line() {
 set_rate_guaranteed() {
 	local item
 	if [ -z "$out_rate_guaranteed" ]; then
-		error 'QoS out_rate_guaranteed is not set.'
+		die 'QoS out_rate_guaranteed is not set.'
 	fi
-	if [ "${out_rate_guaranteed[0]}" -gt 5 ]; then
-		error 'QoS: out_rate_guaranteed too many parameters.'
+	if [ "${#out_rate_guaranteed[@]}" -gt 5 ]; then
+		die 'QoS: out_rate_guaranteed too many parameters.'
 	fi
-	for item in `echo ${out_rate_guaranteed[@]}`; do
+	for item in ${out_rate_guaranteed[@]}; do
 		case $item in
 			realtime=*)
 				qos_rate 'Output' "$item"
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_RATE[1]="$RESULT"
 				else
-					error "qos_rate() did something wrong."
+					die "qos_rate() did something wrong."
 				fi
 			;;
 			high=*)
@@ -75,7 +75,7 @@ set_rate_guaranteed() {
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_RATE[2]="$RESULT"
 				else
-					error "qos_rate() did something wrong."
+					die "qos_rate() did something wrong."
 				fi
 			;;
 			medium=*)
@@ -83,7 +83,7 @@ set_rate_guaranteed() {
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_RATE[3]="$RESULT"
 				else
-					error "qos_rate() did something wrong."
+					die "qos_rate() did something wrong."
 				fi
 			;;
 			low=*)
@@ -91,7 +91,7 @@ set_rate_guaranteed() {
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_RATE[4]="$RESULT"
 				else
-					error "qos_rate() did something wrong."
+					die "qos_rate() did something wrong."
 				fi
 			;;
 			bulk=*)
@@ -99,11 +99,11 @@ set_rate_guaranteed() {
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_RATE[5]="$RESULT"
 				else
-					error "qos_rate() did something wrong."
+					die "qos_rate() did something wrong."
 				fi
 			;;
 			*)
-				error "Output QoS unknown item $item"
+				die "Output QoS unknown item $item"
 			;;
 		esac
 	done
@@ -112,19 +112,19 @@ set_rate_guaranteed() {
 set_rate_max() {
 	local item
 	if [ -z "$out_rate_max" ]; then
-		error 'QoS out_rate_guaranteed is not set.'
+		die 'QoS out_rate_guaranteed is not set.'
 	fi
-	if [ "${out_rate_max[0]}" -gt 5 ]; then
-		error 'QoS: out_rate_max too many parameters.'
+	if [ "${#out_rate_max[@]}" -gt 5 ]; then
+		die 'QoS: out_rate_max too many parameters.'
 	fi
-	for item in `echo ${out_rate_max[@]}`; do
+	for item in ${out_rate_max[@]}; do
 		case $item in
 			realtime=*)
 				qos_rate 'Output' "$item"
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_ULRATE[1]="$RESULT"
 				else
-					error "qos_rate() did something wrong."
+					die "qos_rate() did something wrong."
 				fi
 			;;
 			high=*)
@@ -132,7 +132,7 @@ set_rate_max() {
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_ULRATE[2]="$RESULT"
 				else
-					error "qos_rate() did something wrong."
+					die "qos_rate() did something wrong."
 				fi
 			;;
 			medium=*)
@@ -140,7 +140,7 @@ set_rate_max() {
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_ULRATE[3]="$RESULT"
 				else
-					error "qos_rate() did something wrong."
+					die "qos_rate() did something wrong."
 				fi
 			;;
 			low=*)
@@ -148,7 +148,7 @@ set_rate_max() {
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_ULRATE[4]="$RESULT"
 				else
-					error "qos_rate() did something wrong."
+					die "qos_rate() did something wrong."
 				fi
 			;;
 			bulk=*)
@@ -156,28 +156,28 @@ set_rate_max() {
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_ULRATE[5]="$RESULT"
 				else
-					error "qos_rate() did something wrong."
+					die "qos_rate() did something wrong."
 				fi
 			;;
 			*)
-				error "Output QoS unknown item $item"
+				die "Output QoS unknown item $item"
 			;;
 		esac
 	done
 	if [ -z "$in_rate_max" ]; then
-		error 'QoS out_rate_guaranteed is not set.'
+		die 'QoS in_rate_max is not set.'
 	fi
-	if [ "${in_rate_max[0]}" -gt 5 ]; then
-		error 'QoS: in_rate_max too many parameters.'
+	if [ "${#in_rate_max[@]}" -gt 5 ]; then
+		die 'QoS: in_rate_max too many parameters.'
 	fi
-	for item in `echo ${in_rate_max[@]}`; do
+	for item in ${in_rate_max[@]}; do
 		case $item in
 			realtime=*)
 				qos_rate 'Input' "$item"
 				if [ ! $? -gt 0 ]; then
 					QOS_IN_ULRATE[1]="$RESULT"
 				else
-					error "qos_rate() did someting wrong."
+					die "qos_rate() did someting wrong."
 				fi
 			;;
 			high=*)
@@ -185,7 +185,7 @@ set_rate_max() {
 				if [ ! $? -gt 0 ]; then
 					QOS_IN_ULRATE[2]="$RESULT"
 				else
-					error "qos_rate() did something wrong."
+					die "qos_rate() did something wrong."
 				fi
 			;;
 			medium=*)
@@ -193,7 +193,7 @@ set_rate_max() {
 				if [ ! $? -gt 0 ]; then
 					QOS_IN_ULRATE[3]="$RESULT"
 				else
-					error "qos_rate() did something wrong."
+					die "qos_rate() did something wrong."
 				fi
 			;;
 			low=*)
@@ -201,7 +201,7 @@ set_rate_max() {
 				if [ ! $? -gt 0 ]; then
 					QOS_IN_ULRATE[4]="$RESULT"
 				else
-					error "qos_rate() did something wrong."
+					die "qos_rate() did something wrong."
 				fi
 			;;
 			bulk=*)
@@ -209,11 +209,44 @@ set_rate_max() {
 				if [ ! $? -gt 0 ]; then
 					QOS_IN_ULRATE[5]="$RESULT"
 				else
-					error "qos_rate() did something wrong."
+					die "qos_rate() did something wrong."
 				fi
 			;;
 			*)
-				error "Input QoS unknown item $item"
+				die "Input QoS unknown item $item"
+			;;
+		esac
+	done
+}
+
+set_delay() {
+	local item
+	if [ -z "$out_delay" ]; then
+		die 'QoS out_rate_guaranteed is not set.'
+	fi
+	if [ "${#out_delay[@]}" -gt 5 ]; then
+		die 'QoS: out_rate_guaranteed too many parameters.'
+	fi
+	for item in ${out_delay[@]}; do
+		local QOS_VALUE="`echo $item | cut -d'=' -f2 | sed -e 's/[a-z]//g'`"
+		case $item in
+			realtime=*)
+				QOS_OUT_DELAY[1]="$QOS_VALUE"
+			;;
+			high=*)
+				QOS_OUT_DELAY[2]="$QOS_VALUE"
+			;;
+			medium=*)
+				QOS_OUT_DELAY[3]="$QOS_VALUE"
+			;;
+			low=*)
+				QOS_OUT_DELAY[4]="$QOS_VALUE"
+			;;
+			bulk=*)
+				QOS_OUT_DELAY[5]="$QOS_VALUE"
+			;;
+			*)
+				die "Output QoS unknown item $item"
 			;;
 		esac
 	done
@@ -222,13 +255,13 @@ set_rate_max() {
 set_classes() {
 	local rule item items TYPE VALUE MARK DPORT SPORT PROTOCOL
 	if [ -z "$out_classes" ]; then
-		error 'QoS out_classes is not set.'
+		die 'QoS out_classes is not set.'
 	fi
-	for rule in `echo ${out_classes[@]}`; do
+	for rule in "${out_classes[@]}"; do
 		items=("$rule")
-		for item in `echo ${items[@]}`; do
-			ITEM="`echo $item | cut -d'=' -f0`"
-			VALUE="`echo $item | cut -d'=' -f1`"
+		for item in ${items[*]}; do
+			ITEM="`echo $item`"
+			VALUE="`echo $item | cut -d'=' -f2`"
 			case $ITEM in
 				priority=*)
 					case $VALUE in
@@ -248,28 +281,28 @@ set_classes() {
 							MARK='50'
 						;;
 						*)
-							error 'QoS out_classes priority value invalid.'
+							die 'QoS out_classes priority value invalid.'
 						;;
 					esac
 				;;
 				dport=*)
 					if [ ! $VALUE -eq $VALUE 2> /dev/null ]; then
-						error 'QoS out_classes dport value is not a number.'
+						die 'QoS out_classes dport value is not a number.'
 					fi
 					if [ $VALUE -gt 0 ] && [ $VALUE -lt 65535 ]; then
 						DPORT=$VALUE
 					else
-						error 'QoS out_classes dport out of range.'
+						die 'QoS out_classes dport out of range.'
 					fi
 				;;
 				sport=*)
 					if [ ! $VALUE -eq $VALUE 2> /dev/null ]; then
-						error 'QoS out_classes sport value is not a number.'
+						die 'QoS out_classes sport value is not a number.'
 					fi
 					if [ $VALUE -gt 0 ] && [ $VALUE -lt 65535 ]; then
 						SPORT=$VALUE
 					else
-						error 'QoS out_classes sport out of range.'
+						die 'QoS out_classes sport out of range.'
 					fi
 				;;
 				protocol=*)
@@ -284,16 +317,20 @@ set_classes() {
 							PROTOCOL=icmp
 						;;
 						*)
-							error 'QoS out_classes protocol unknown.'
+							die 'QoS out_classes protocol unknown.'
 						;;
 					esac
 				;;
 				*)
-					error "QoS out_classes unknown item."
+					die "QoS out_classes unknown item."
 				;;
 			esac
 		done
-		QOS_OUT_RULES=("${QOS_OUT_RULES[@]}" "protocol=$PROTOCOL sport=$SPORT dport=$DPORT mark=$MARK")
+		if [ -z "$SPORT" ]; then
+			QOS_OUT_RULES=("${QOS_OUT_RULES[@]}" "protocol=$PROTOCOL dport=$DPORT mark=$MARK")
+		else
+			QOS_OUT_RULES=("${QOS_OUT_RULES[@]}" "protocol=$PROTOCOL sport=$SPORT dport=$DPORT mark=$MARK")
+		fi
 		unset PROTOCOL SPORT DPORT MARK
 	done
 }

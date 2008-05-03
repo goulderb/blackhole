@@ -28,8 +28,8 @@ crux)
 		echo "Beginning Blackhole installation."
 		createdirs
 		rcins crux
-		cp config/{blackhole,extopts,ipblock-{input,output}}.conf $DESTDIR/etc/blackhole/
-		cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
+		cp config/{blackhole,extopts,ipblock-{input,output},qos}.conf $DESTDIR/etc/blackhole/
+		cp includes/{module-functions,functions,qos-functions} $PREFIX/share/blackhole/includes/
 		cp modules/* $PREFIX/share/blackhole/modules/
 		cp blackhole $PREFIX/bin/blackhole
 		chmod +x $PREFIX/bin/blackhole
@@ -45,8 +45,8 @@ slackware)
 		echo "Beggining Blackhole installation"
 		createdirs
 		rcins slackware
-		cp config/{blackhole,extopts,ipblock-{input,output}}.conf $DESTDIR/etc/blackhole/
-		cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
+		cp config/{blackhole,extopts,ipblock-{input,output},qos}.conf $DESTDIR/etc/blackhole/
+		cp includes/{module-functions,functions,qos-functions} $PREFIX/share/blackhole/includes/
 		cp modules/* $PREFIX/share/blackhole/modules/
 		cp blackhole $PREFIX/bin/blackhole
 		chmod +x $PREFIX/bin/blackhole
@@ -61,8 +61,8 @@ generic)
 	if [ ! -d $DESTDIR/etc/blackhole ]; then
 		echo "Beginning Blackhole installation"
 		createdirs
-		cp config/{blackhole,extopts,ipblock-{input,output}}.conf $DESTDIR/etc/blackhole/
-		cp includes/{module-functions,functions} $PREFIX/share/blackhole/includes/
+		cp config/{blackhole,extopts,ipblock-{input,output},qos}.conf $DESTDIR/etc/blackhole/
+		cp includes/{module-functions,functions,qos-functions} $PREFIX/share/blackhole/includes/
 		cp modules/* $PREFIX/share/blackhole/modules/
 		cp blackhole $PREFIX/bin/blackhole
 		chmod +x $PREFIX/bin/blackhole

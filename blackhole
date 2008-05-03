@@ -19,7 +19,7 @@ else
 fi
 
 if [ -d "$PREFIX"/share/blackhole/modules -a -f "$PREFIX"/share/blackhole/modules/core.bmod ] \
-	&& [ -f "$PWD"/.bhdev ]; then
+	&& [ ! -f "$PWD"/.bhdev ]; then
 	export MODDIR="$PREFIX/share/blackhole/modules"
 elif [ -d "$PWD"/modules -a -f "$PWD"/modules/core.bmod ]; then
 	export MODDIR="$PWD/modules"
@@ -29,7 +29,7 @@ else
 fi
 
 if [ -f "$PREFIX"/share/blackhole/includes/module-functions -a -f "$PREFIX"/share/blackhole/includes/functions ] \
-	&& [ -f "$PWD"/.bhdev ]; then
+	&& [ ! -f "$PWD"/.bhdev ]; then
 	. "$PREFIX"/share/blackhole/includes/module-functions
 	. "$PREFIX"/share/blackhole/includes/functions
 	export INCDIR=""$PREFIX"/share/blackhole/includes/"
@@ -66,12 +66,16 @@ start)
 	fi
 ;;
 stop)
+	tc qdisc del dev $EXTIF handle 1:0 root hfsc default 50 2>/dev/null
 	iptables -F
 	iptables -t nat -F
+	iptables -t mangle -F
 	iptables -P INPUT ACCEPT
 	iptables -P FORWARD ACCEPT
 	iptables -P OUTPUT ACCEPT
 	iptables -X
+	iptables -t nat -X
+	iptables -t mangle -X
 ;;
 restart)
 	$0 stop

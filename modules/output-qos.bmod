@@ -5,7 +5,12 @@
 
 if [ -n "${OUTPUT_QOS[@]}" ]; then
 	source "$CONFDIR/qos.conf"
-	source "$INCDIR/qos-includes"
+	source "$INCDIR/qos-functions"
+	export QOS_OUT_RATE_MASTER="`set_rate_line`"
+	set_rate_guaranteed
+	set_rate_max
+	set_delay
+	set_classes
 	ip link set txqueuelen 30 $EXTIF
 	tc qdisc add dev $EXTIF handle 1:0 root hfsc default 50
 	tc class add dev $EXTIF parent 1:0 classid 1:1 hfsc sc rate ${QOS_OUT_RATE_MASTER}kbit ul rate ${QOS_OUT_RATE_MASTER}kbit
@@ -26,27 +31,26 @@ if [ -n "${OUTPUT_QOS[@]}" ]; then
 	tc filter add dev $EXTIF parent 1:0 prio 0 protocol ip handle 50 fw flowid 1:50
 	iptables -t mangle -N QOS-OUT
 	iptables -t mangle -I POSTROUTING -o $EXTIF -j QOS-OUT
-	for rule in ${QOS_OUT_RULES[@]}; do
-		QOS_items=("$rule")
-		for item in ${QOS_items[@]}; do
-			QOS_VALUE="`echo $item | cut -d'=' -f1`"
+	for rules in "${QOS_OUT_RULES[@]}"; do
+		for item in $rules; do
+			QOS_VALUE="`echo $item | cut -d'=' -f2`"
 			case $item in
 				protocol=*)
-					PROTOCOL="$item"
+					PROTOCOL="$QOS_VALUE"
 				;;
 				sport=*)
-					SPORT="--sport $item"
+					SPORT="--sport $QOS_VALUE"
 				;;
 				dport=*)
-					DPORT="--sport $item"
+					DPORT="--sport $QOS_VALUE"
 				;;
 				mark=*)
-					MARK="$item"
+					MARK="$QOS_VALUE"
 				;;
 			esac
 		done
 		iptables -t mangle -A QOS-OUT -p $PROTOCOL $SPORT $DPORT -m mark --mark 0 -j MARK --set-mark $MARK
-		unset PROTOCOL SPORT DPORT MARK QOS_items QOS_VALUE
+		unset PROTOCOL SPORT DPORT MARK QOS_VALUE
 	done
 	iptables -t mangle -A QOS-OUT -p tcp -m tos --tos Minimize-Delay -m mark --mark 0 -j MARK --set-mark 10
 	iptables -t mangle -A QOS-OUT -p tcp -m tos --tos Maximize-Throughput -m mark --mark 0 -j MARK --set-mark 20
