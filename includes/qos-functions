@@ -293,7 +293,7 @@ set_classes() {
 				;;
 			esac
 		done
-		QOS_OUT_RULES=("${QOS_OUT_RULES[@]}" "$MARK $DPORT $SPORT $PROTOCOL")
-		unset MARK DPORT SPORT PROTOCOL
+		QOS_OUT_RULES=("${QOS_OUT_RULES[@]}" "protocol=$PROTOCOL sport=$SPORT dport=$DPORT mark=$MARK")
+		unset PROTOCOL SPORT DPORT MARK
 	done
 }
