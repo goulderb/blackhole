@@ -53,7 +53,7 @@ set_rate_line() {
 }
 
 set_rate_guaranteed() {
-	local ITEM
+	local item
 	if [ -z "$out_rate_guaranteed" ]; then
 		error 'QoS out_rate_guaranteed is not set.'
 	fi
@@ -61,17 +61,17 @@ set_rate_guaranteed() {
 		error 'QoS: out_rate_guaranteed too many parameters.'
 	fi
 	for item in `echo ${out_rate_guaranteed[@]}`; do
-		case $ITEM in
+		case $item in
 			realtime=*)
-				qos_rate 'Output' "$ITEM"
+				qos_rate 'Output' "$item"
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_RATE[1]="$RESULT"
 				else
-					error "qos_rate() did someting naughty."
+					error "qos_rate() did something naughty."
 				fi
 			;;
 			high=*)
-				qos_rate 'Output' "$ITEM"
+				qos_rate 'Output' "$item"
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_RATE[2]="$RESULT"
 				else
@@ -79,7 +79,7 @@ set_rate_guaranteed() {
 				fi
 			;;
 			medium=*)
-				qos_rate 'Output' "$ITEM"
+				qos_rate 'Output' "$item"
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_RATE[3]="$RESULT"
 				else
@@ -87,7 +87,7 @@ set_rate_guaranteed() {
 				fi
 			;;
 			low=*)
-				qos_rate 'Output' "$ITEM"
+				qos_rate 'Output' "$item"
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_RATE[4]="$RESULT"
 				else
@@ -95,7 +95,7 @@ set_rate_guaranteed() {
 				fi
 			;;
 			bulk=*)
-				qos_rate 'Output' "$ITEM"
+				qos_rate 'Output' "$item"
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_RATE[5]="$RESULT"
 				else
@@ -103,14 +103,14 @@ set_rate_guaranteed() {
 				fi
 			;;
 			*)
-				error "Output QoS unknown item $ITEM"
+				error "Output QoS unknown item $item"
 			;;
 		esac
 	done
 }
 
 set_rate_max() {
-	local ITEM
+	local item
 	if [ -z "$out_rate_max" ]; then
 		error 'QoS out_rate_guaranteed is not set.'
 	fi
@@ -118,17 +118,17 @@ set_rate_max() {
 		error 'QoS: out_rate_max too many parameters.'
 	fi
 	for item in `echo ${out_rate_max[@]}`; do
-		case $ITEM in
+		case $item in
 			realtime=*)
-				qos_rate 'Output' "$ITEM"
+				qos_rate 'Output' "$item"
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_ULRATE[1]="$RESULT"
 				else
-					error "qos_rate() did someting naughty."
+					error "qos_rate() did something naughty."
 				fi
 			;;
 			high=*)
-				qos_rate 'Output' "$ITEM"
+				qos_rate 'Output' "$item"
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_ULRATE[2]="$RESULT"
 				else
@@ -136,7 +136,7 @@ set_rate_max() {
 				fi
 			;;
 			medium=*)
-				qos_rate 'Output' "$ITEM"
+				qos_rate 'Output' "$item"
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_ULRATE[3]="$RESULT"
 				else
@@ -144,7 +144,7 @@ set_rate_max() {
 				fi
 			;;
 			low=*)
-				qos_rate 'Output' "$ITEM"
+				qos_rate 'Output' "$item"
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_ULRATE[4]="$RESULT"
 				else
@@ -152,7 +152,7 @@ set_rate_max() {
 				fi
 			;;
 			bulk=*)
-				qos_rate 'Output' "$ITEM"
+				qos_rate 'Output' "$item"
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_ULRATE[5]="$RESULT"
 				else
@@ -160,11 +160,10 @@ set_rate_max() {
 				fi
 			;;
 			*)
-				error "Output QoS unknown item $ITEM"
+				error "Output QoS unknown item $item"
 			;;
 		esac
 	done
-	unset ITEM
 	if [ -z "$in_rate_max" ]; then
 		error 'QoS out_rate_guaranteed is not set.'
 	fi
@@ -172,9 +171,9 @@ set_rate_max() {
 		error 'QoS: in_rate_max too many parameters.'
 	fi
 	for item in `echo ${in_rate_max[@]}`; do
-		case $ITEM in
+		case $item in
 			realtime=*)
-				qos_rate 'Input' "$ITEM"
+				qos_rate 'Input' "$item"
 				if [ ! $? -gt 0 ]; then
 					QOS_IN_ULRATE[1]="$RESULT"
 				else
@@ -182,7 +181,7 @@ set_rate_max() {
 				fi
 			;;
 			high=*)
-				qos_rate 'Input' "$ITEM"
+				qos_rate 'Input' "$item"
 				if [ ! $? -gt 0 ]; then
 					QOS_IN_ULRATE[2]="$RESULT"
 				else
@@ -190,7 +189,7 @@ set_rate_max() {
 				fi
 			;;
 			medium=*)
-				qos_rate 'Input' "$ITEM"
+				qos_rate 'Input' "$item"
 				if [ ! $? -gt 0 ]; then
 					QOS_IN_ULRATE[3]="$RESULT"
 				else
@@ -198,7 +197,7 @@ set_rate_max() {
 				fi
 			;;
 			low=*)
-				qos_rate 'Input' "$ITEM"
+				qos_rate 'Input' "$item"
 				if [ ! $? -gt 0 ]; then
 					QOS_IN_ULRATE[4]="$RESULT"
 				else
@@ -206,7 +205,7 @@ set_rate_max() {
 				fi
 			;;
 			bulk=*)
-				qos_rate 'Input' "$ITEM"
+				qos_rate 'Input' "$item"
 				if [ ! $? -gt 0 ]; then
 					QOS_IN_ULRATE[5]="$RESULT"
 				else
@@ -214,7 +213,7 @@ set_rate_max() {
 				fi
 			;;
 			*)
-				error "Input QoS unknown item $ITEM"
+				error "Input QoS unknown item $item"
 			;;
 		esac
 	done
