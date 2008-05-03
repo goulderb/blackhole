@@ -67,7 +67,7 @@ set_rate_guaranteed() {
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_RATE[1]="$RESULT"
 				else
-					error "qos_rate() did something naughty."
+					error "qos_rate() did something wrong."
 				fi
 			;;
 			high=*)
@@ -75,7 +75,7 @@ set_rate_guaranteed() {
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_RATE[2]="$RESULT"
 				else
-					error "qos_rate() did something naughty."
+					error "qos_rate() did something wrong."
 				fi
 			;;
 			medium=*)
@@ -83,7 +83,7 @@ set_rate_guaranteed() {
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_RATE[3]="$RESULT"
 				else
-					error "qos_rate() did something naughty."
+					error "qos_rate() did something wrong."
 				fi
 			;;
 			low=*)
@@ -91,7 +91,7 @@ set_rate_guaranteed() {
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_RATE[4]="$RESULT"
 				else
-					error "qos_rate() did something naughty."
+					error "qos_rate() did something wrong."
 				fi
 			;;
 			bulk=*)
@@ -99,7 +99,7 @@ set_rate_guaranteed() {
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_RATE[5]="$RESULT"
 				else
-					error "qos_rate() did something naughty."
+					error "qos_rate() did something wrong."
 				fi
 			;;
 			*)
@@ -124,7 +124,7 @@ set_rate_max() {
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_ULRATE[1]="$RESULT"
 				else
-					error "qos_rate() did something naughty."
+					error "qos_rate() did something wrong."
 				fi
 			;;
 			high=*)
@@ -132,7 +132,7 @@ set_rate_max() {
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_ULRATE[2]="$RESULT"
 				else
-					error "qos_rate() did something naughty."
+					error "qos_rate() did something wrong."
 				fi
 			;;
 			medium=*)
@@ -140,7 +140,7 @@ set_rate_max() {
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_ULRATE[3]="$RESULT"
 				else
-					error "qos_rate() did something naughty."
+					error "qos_rate() did something wrong."
 				fi
 			;;
 			low=*)
@@ -148,7 +148,7 @@ set_rate_max() {
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_ULRATE[4]="$RESULT"
 				else
-					error "qos_rate() did something naughty."
+					error "qos_rate() did something wrong."
 				fi
 			;;
 			bulk=*)
@@ -156,7 +156,7 @@ set_rate_max() {
 				if [ ! $? -gt 0 ]; then
 					QOS_OUT_ULRATE[5]="$RESULT"
 				else
-					error "qos_rate() did something naughty."
+					error "qos_rate() did something wrong."
 				fi
 			;;
 			*)
@@ -177,7 +177,7 @@ set_rate_max() {
 				if [ ! $? -gt 0 ]; then
 					QOS_IN_ULRATE[1]="$RESULT"
 				else
-					error "qos_rate() did someting naughty."
+					error "qos_rate() did someting wrong."
 				fi
 			;;
 			high=*)
@@ -185,7 +185,7 @@ set_rate_max() {
 				if [ ! $? -gt 0 ]; then
 					QOS_IN_ULRATE[2]="$RESULT"
 				else
-					error "qos_rate() did something naughty."
+					error "qos_rate() did something wrong."
 				fi
 			;;
 			medium=*)
@@ -193,7 +193,7 @@ set_rate_max() {
 				if [ ! $? -gt 0 ]; then
 					QOS_IN_ULRATE[3]="$RESULT"
 				else
-					error "qos_rate() did something naughty."
+					error "qos_rate() did something wrong."
 				fi
 			;;
 			low=*)
@@ -201,7 +201,7 @@ set_rate_max() {
 				if [ ! $? -gt 0 ]; then
 					QOS_IN_ULRATE[4]="$RESULT"
 				else
-					error "qos_rate() did something naughty."
+					error "qos_rate() did something wrong."
 				fi
 			;;
 			bulk=*)
@@ -209,12 +209,91 @@ set_rate_max() {
 				if [ ! $? -gt 0 ]; then
 					QOS_IN_ULRATE[5]="$RESULT"
 				else
-					error "qos_rate() did something naughty."
+					error "qos_rate() did something wrong."
 				fi
 			;;
 			*)
 				error "Input QoS unknown item $item"
 			;;
 		esac
+	done
+}
+
+set_classes() {
+	local rule item items TYPE VALUE MARK DPORT SPORT PROTOCOL
+	if [ -z "$out_classes" ]; then
+		error 'QoS out_classes is not set.'
+	fi
+	for rule in `echo ${out_classes[@]}`; do
+		items=("$rule")
+		for item in `echo ${items[@]}`; do
+			ITEM="`echo $item | cut -d'=' -f0`"
+			VALUE="`echo $item | cut -d'=' -f1`"
+			case $ITEM in
+				priority=*)
+					case $VALUE in
+						realtime)
+							MARK='10'
+						;;
+						high)
+							MARK='20'
+						;;
+						medium)
+							MARK='30'
+						;;
+						low)
+							MARK='40'
+						;;
+						bulk)
+							MARK='50'
+						;;
+						*)
+							error 'QoS out_classes priority value invalid.'
+						;;
+					esac
+				;;
+				dport=*)
+					if [ ! $VALUE -eq $VALUE 2> /dev/null ]; then
+						error 'QoS out_classes dport value is not a number.'
+					fi
+					if [ $VALUE -gt 0 ] && [ $VALUE -lt 65535 ]; then
+						DPORT=$VALUE
+					else
+						error 'QoS out_classes dport out of range.'
+					fi
+				;;
+				sport=*)
+					if [ ! $VALUE -eq $VALUE 2> /dev/null ]; then
+						error 'QoS out_classes sport value is not a number.'
+					fi
+					if [ $VALUE -gt 0 ] && [ $VALUE -lt 65535 ]; then
+						SPORT=$VALUE
+					else
+						error 'QoS out_classes sport out of range.'
+					fi
+				;;
+				protocol=*)
+					case $VALUE in
+						tcp)
+							PROTOCOL=tcp
+						;;
+						udp)
+							PROTOCOL=udp
+						;;
+						icmp)
+							PROTOCOL=icmp
+						;;
+						*)
+							error 'QoS out_classes protocol unknown.'
+						;;
+					esac
+				;;
+				*)
+					error "QoS out_classes unknown item."
+				;;
+			esac
+		done
+		QOS_OUT_RULES=("${QOS_OUT_RULES[@]}" "$MARK $DPORT $SPORT $PROTOCOL")
+		unset MARK DPORT SPORT PROTOCOL
 	done
 }
