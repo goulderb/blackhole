@@ -6,27 +6,27 @@
 if [ -f "$CONFDIR/ipblock-input.conf" -a ! "`cat $CONFDIR/ipblock-input.conf | wc -l`" = 0 ]; then
 	iptables -N IPBLOCK_IN
 	iptables -A INPUT -i $EXTIF -m state --state NEW -j IPBLOCK_IN
-	for i in `cat $CONFDIR/ipblock-input.conf`; do
+	for i in `cat "$CONFDIR/ipblock-input.conf"`; do
 		local IP="`echo $i | cut -d/ -f1`"
 		local PORT="`echo $i | cut -d/ -f2`"
 		local PROTO="`echo $i | cut -d/ -f3`"
 		local DIRECTION="`echo $i | cut -d/ -f4`"
 
-		if [ "$DIRECTION" = "s" ]; then
-			PORT_OPTS="--sport "$PORT""
-		elif [ "$DIRECTION" = "d" ]; then
-			PORT_OPTS="--dport "$PORT""
-		elif [ "$DIRECTION" = "b" ]; then
-			PORT_OPTS="--dport "$PORT" --sport "$PORT""
+		if [ "$DIRECTION" = 's' ]; then
+			PORT_OPTS="--sport $PORT"
+		elif [ "$DIRECTION" = 'd' ]; then
+			PORT_OPTS="--dport $PORT"
+		elif [ "$DIRECTION" = 'b' ]; then
+			PORT_OPTS="--dport $PORT --sport $PORT"
 		else
-			PORT_OPTS="--dport "$PORT""
+			PORT_OPTS="--dport $PORT"
 		fi
 
 		if [ -f "$CONFDIR/extopts.conf" ]; then
 			EXTOPTS="`grep "$PORT/input" "$CONFDIR/extopts.conf" | cut -d: -f2`"
 		fi
 
-		if [ -n "$PORT" -a "$PORT" = "all" -a -n "$PROTO" ]; then
+		if [ -n "$PORT" -a "$PORT" = 'all' -a -n "$PROTO" ]; then
 		 iptables -A IPBLOCK_IN -s "$IP" -p "$PROTO" $EXTOPTS -j $DROP
 		elif [ -n "$PORT" -a ! "$PORT" = "all" -a -n "$PROTO" ]; then
 		 iptables -A IPBLOCK_IN -s "$IP" -p "$PROTO" $PORT_OPTS $EXTOPTS -j $DROP
@@ -38,24 +38,24 @@ fi
 if [ -f "$CONFDIR/ipblock-output.conf" -a ! "`cat $CONFDIR/ipblock-output.conf | wc -l`" = 0 ]; then
 	iptables -N IPBLOCK_OUT
 	if [ -n "$IPBLOCK_ALLOW_OUTBOUND_FTP" ]; then
-		iptables -A OUTPUT -o $INTIF -p tcp -m state --state NEW,ESTABLISHED,RELATED -j IPBLOCK_OUT
+		iptables -A OUTPUT -o $EXTIF -p tcp -m state --state NEW,ESTABLISHED,RELATED -j IPBLOCK_OUT
 	else
-		iptables -A OUTPUT -o $INTIF -p tcp -m state --state NEW -j IPBLOCK_OUT
+		iptables -A OUTPUT -o $EXTIF -p tcp -m state --state NEW -j IPBLOCK_OUT
 	fi
-	for i in `cat $CONFDIR/ipblock-input.conf`; do
+	for i in `cat "$CONFDIR/ipblock-input.conf"`; do
 		local IP="`echo $i | cut -d/ -f1`"
 		local PORT="`echo $i | cut -d/ -f2`"
 		local PROTO="`echo $i | cut -d/ -f3`"
 		local DIRECTION="`echo $i | cut -d/ -f4`"
 
-		if [ "$DIRECTION" = "s" ]; then
-			PORT_OPTS="--sport "$PORT""
-		elif [ "$DIRECTION" = "d" ]; then
-			PORT_OPTS="--dport "$PORT""
-		elif [ "$DIRECTION" = "b" ]; then
-			PORT_OPTS="--dport "$PORT" --sport "$PORT""
+		if [ "$DIRECTION" = 's' ]; then
+			PORT_OPTS="--sport $PORT"
+		elif [ "$DIRECTION" = 'd' ]; then
+			PORT_OPTS="--dport $PORT"
+		elif [ "$DIRECTION" = 'b' ]; then
+			PORT_OPTS="--dport $PORT --sport $PORT"
 		else
-			PORT_OPTS="--dport "$PORT""
+			PORT_OPTS="--dport $PORT"
 		fi
 
 		if [ -f "$CONFDIR/extopts.conf" ]; then
@@ -66,22 +66,22 @@ if [ -f "$CONFDIR/ipblock-output.conf" -a ! "`cat $CONFDIR/ipblock-output.conf |
 			iptables -A IPBLOCK_OUT -p icmp --icmp-type 8 -j RETURN
 		fi
 
-		if [ -n "$PORT" -a "$PORT" = "all" -a -n "$PROTO" ]; then
+		if [ -n "$PORT" -a "$PORT" = 'all' -a -n "$PROTO" ]; then
 			iptables -A IPBLOCK_OUT -s "$IP" -p "$PROTO" $EXTOPTS -j $DROP
-		elif [ -n "$PORT" -a ! "$PORT" = "all" -a -n "$PROTO" ]; then
+		elif [ -n "$PORT" -a ! "$PORT" = 'all' -a -n "$PROTO" ]; then
 			iptables -A IPBLOCK_OUT -s "$IP" -p "$PROTO" $PORT_OPTS $EXTOPTS -j $DROP
 		fi
 
 		# FTP has special annoyances which make it so we have to work with it, all this crap makes dealing with it a lot easier.
 		if [ -n "$IPBLOCK_ALLOW_OUTBOUND_FTP" ]; then
 			modprobe -q nf_conntrack_ftp
-			if [ $? -lt "1" ]; then
+			if [ $? -lt '1' ]; then
 				iptables -A IPBLOCK_OUT -p tcp --dport 20:21 -m state --state NEW -j RETURN
 				iptables -A IPBLOCK_OUT -p tcp --dport 1024: -m state --state ESTABLISHED,RELATED \
 					-m helper --helper ftp -j RETURN
 			else
 				modprobe -q ip_conntrack_ftp
-				if [ $? -lt "1" ]; then
+				if [ $? -lt '1' ]; then
 					iptables -A IPBLOCK_OUT -p tcp --dport 20:21 -m state --state NEW -j RETURN
 					iptables -A IPBLOCK_OUT -p tcp --dport 1024: -m state --state ESTABLISHED,RELATED \
 						-m helper --helper ftp -j RETURN
