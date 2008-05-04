@@ -464,19 +464,19 @@ set_classes() {
 					priority=*)
 						case $VALUE in
 							realtime)
-								MARK='10'
+								MARK='110'
 							;;
 							high)
-								MARK='20'
+								MARK='120'
 							;;
 							medium)
-								MARK='30'
+								MARK='130'
 							;;
 							low)
-								MARK='40'
+								MARK='140'
 							;;
 							bulk)
-								MARK='50'
+								MARK='150'
 							;;
 							*)
 								die 'QoS in_classes priority value invalid.'
