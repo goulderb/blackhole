@@ -56,3 +56,18 @@ remove-service-slackware:
 	else
 		@echo "Please add \"sed '|/etc/rc.d/rc.firewall start|d' '/etc/rc.d/rc.local' 2> /dev/null\" to a post-remove file."
 	endfi
+
+### Developer targets.
+DATETIME=$(shell date +%Y%m%d-%k%M)
+PWD=$(shell pwd)
+dev-snapshot:
+	-rm -r blackhole-$(DATETIME)
+	-rm blackhole-$(DATETIME).tar.bz2
+	mkdir blackhole-$(DATETIME)
+	make -C config install DESTDIR=$(PWD)/blackhole-$(DATETIME)
+	make -C includes install DESTDIR=$(PWD)/blackhole-$(DATETIME)
+	make -C modules install DESTDIR=$(PWD)/blackhole-$(DATETIME)
+	make install DESTDIR=$(PWD)/blackhole-$(DATETIME)
+	tar -cf blackhole-$(DATETIME).tar blackhole-$(DATETIME)/*
+	rm -r blackhole-$(DATETIME)
+	bzip2 -9 blackhole-$(DATETIME).tar
