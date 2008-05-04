@@ -17,6 +17,12 @@ install:
 	install -d -m 0755 $(DESTDIR)$(BINDIR)
 	install -m 0755 blackhole $(DESTDIR)$(BINDIR)/
 
+update:
+	make -C includes install
+	make -C modules install
+	install -d -m 0755 $(DESTDIR)$(BINDIR)
+	install -m 0755 blackhole $(DESTDIR)$(BINDIR)/
+
 remove:
 	make -C config remove
 	make -C includes remove
