@@ -8,3 +8,6 @@ SRC=bruteforce-defeat.bmod core.bmod flood-limiting.bmod \
 install:
 	install -d -m 0755 $(DESTDIR)$(SHAREDIR)/blackhole/modules
 	install -m 0644 -t $(DESTDIR)$(SHAREDIR)/blackhole/modules/ $(SRC)
+
+remove:
+	rm -rf $(DESTDIR)$(SHAREDIR)/blackhole/includes/modules

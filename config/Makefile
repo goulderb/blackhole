@@ -6,3 +6,6 @@ SRC=blackhole.conf extopts.conf ipblock-input.conf \
 install:
 	install -d -m 0755 $(DESTDIR)$(ETCDIR)/blackhole
 	install -m 0644 -t $(DESTDIR)$(ETCDIR)/blackhole/ $(SRC)
+
+remove:
+	rm -rf $(DESTDIR)$(ETCDIR)/blackhole
