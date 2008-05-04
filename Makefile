@@ -41,7 +41,7 @@ install-service-slackware:
 		@echo "Please add \"echo '/etc/rc.d/rc.firewall start' >> '/etc/rc.d/rc.local'\" to a post-install file and include checking if already set."
 	endfi
 
-install-service-slackware:
+remove-service-slackware:
 	rm $(DESTDIR)$(ETCDIR)/rc.d/rc.firewall
 	ifeq ($(strip $(DESTDIR)),)
 		@sed '|/etc/rc.d/rc.firewall start|d' '/etc/rc.d/rc.local' 2> /dev/null
