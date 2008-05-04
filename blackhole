@@ -66,7 +66,10 @@ start)
 	fi
 ;;
 stop)
-	tc qdisc del dev $EXTIF handle 1:0 root hfsc default 50 2>/dev/null
+	tc qdisc del dev $EXTIF handle 1:0 root 2>/dev/null > /dev/null
+	tc qdisc del dev imq0 handle 1:0 root 2>/dev/null > /dev/null
+	ip link set imq0 down 2> /dev/null > /dev/null
+	rmmod imq 2> /dev/null > /dev/null
 	iptables -F
 	iptables -t nat -F
 	iptables -t mangle -F
@@ -76,6 +79,7 @@ stop)
 	iptables -X
 	iptables -t nat -X
 	iptables -t mangle -X
+	iptables -Z
 ;;
 restart)
 	$0 stop
