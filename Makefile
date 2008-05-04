@@ -6,6 +6,8 @@ help:
 	@echo 'install-service-crux:      - Install CRUX services files.'
 	@echo 'install-service-slackware: - Install Slackware services files.'
 	@echo
+	@echo	'update                     - Update blackhole, (defaults are in makefile.include. default: DESTDIR/usr)'
+	@echo
 	@echo 'remove:                    - Remove blackhole.'
 	@echo 'remove-service-crux:       - Remove CRUX services files.'
 	@echo 'remove-service-slackware:  - Remove Slackware services files.'
