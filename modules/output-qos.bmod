@@ -3,7 +3,7 @@
 # NAME: output-qos
 # REQUIRES:
 
-if [ -n "${OUTPUT_QOS[@]}" ]; then
+if [ -n "`echo "${MODULES[*]}" | grep output-qos`" ]; then
 	source "$CONFDIR/qos.conf"
 	source "$INCDIR/qos-functions"
 	export QOS_OUT_RATE_MASTER="`set_rate_line`"
