@@ -11,7 +11,7 @@ if [ -n "`echo "${MODULES[*]}" | grep input-qos`" ]; then
 	set_rate_max
 	set_delay
 	set_classes
-	modprobe imq numdevs=1
+	modprobe -q imq numdevs=1
 	if [ $? -lt '1' ]; then
 		ip link set imq0 up
 		tc qdisc add dev imq0 handle 1:0 root hfsc default 150

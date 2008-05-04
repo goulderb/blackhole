@@ -6,6 +6,9 @@
 iptables -P INPUT DROP
 iptables -P FORWARD DROP
 iptables -P OUTPUT DROP
+iptables -t nat -P PREROUTING DROP
+iptables -t nat -P POSTROUTING DROP
+iptables -t nat -P OUTPUT DROP
 iptables -I INPUT 1 -i lo -j ACCEPT
 iptables -I OUTPUT 1 -o lo -j ACCEPT
 iptables -A INPUT -i $EXTIF -p tcp ! --syn -m state --state NEW -j $DROP
