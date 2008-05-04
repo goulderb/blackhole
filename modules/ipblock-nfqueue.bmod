@@ -24,29 +24,29 @@ for i in ${IPBLOCK_WHITELIST_IN[@]}; do
 	if [ -f "$CONFDIR/extopts.conf" ]; then
 		EXTOPTS="`grep "$PORT/input" "$CONFDIR/extopts.conf" | cut -d: -f2`"
 	fi
-	if [ "$DIRECTION" = "s" ]; then
-		PORT_OPTS="--sport "$PORT""
-	elif [ "$DIRECTION" = "d" ]; then
-		PORT_OPTS="--dport "$PORT""
-	elif [ "$DIRECTION" = "b" ]; then
-		PORT_OPTS="--dport "$PORT" --sport "$PORT""
+	if [ "$DIRECTION" = 's' ]; then
+		PORT_OPTS="--sport $PORT"
+	elif [ "$DIRECTION" = 'd' ]; then
+		PORT_OPTS="--dport $PORT"
+	elif [ "$DIRECTION" = 'b' ]; then
+		PORT_OPTS="--dport $PORT --sport $PORT"
 	else
-		PORT_OPTS="--dport "$PORT""
+		PORT_OPTS="--dport $PORT"
 	fi
 	iptables -A $CHAIN_IN -p "$PROTO" $PORT_OPTS $EXTOPTS -j RETURN
 done
 
-if [ "$IPBLOCK_PROGRAM" = "moblock" ]; then
+if [ "$IPBLOCK_PROGRAM" = 'moblock' ]; then
 	iptables -A $CHAIN_IN -j NFQUEUE
-elif [ "$IPBLOCK_PROGRAM" = "iplist" ]; then
+elif [ "$IPBLOCK_PROGRAM" = 'iplist' ]; then
 	iptables -A $CHAIN_IN -m mark --mark 2 -j $DROP
 	iptables -A $CHAIN_IN -m mark ! --mark 1 -j NFQUEUE
 fi
 
 if [ -n "$IPBLOCK_ALLOW_OUTBOUND_FTP" ]; then
-	iptables -A OUTPUT -o $INTIF -p tcp -m state --state NEW,ESTABLISHED,RELATED -j $CHAIN_OUT
+	iptables -A OUTPUT -o $EXTIF -p tcp -m state --state NEW,ESTABLISHED,RELATED -j $CHAIN_OUT
 else
-	iptables -A OUTPUT -o $INTIF -p tcp -m state --state NEW -j $CHAIN_OUT
+	iptables -A OUTPUT -o $EXTIF -p tcp -m state --state NEW -j $CHAIN_OUT
 fi
 if [ -n "$IPBLOCK_ALLOW_OUTBOUND_PING" ]; then
 	iptables -A $CHAIN_OUT -p icmp --icmp-type 8 -j RETURN
@@ -58,27 +58,27 @@ for i in ${IPBLOCK_WHITELIST_OUT[@]}; do
 	if [ -f "$CONFDIR/extopts.conf" ]; then
 		EXTOPTS="`grep "$PORT/output" "$CONFDIR/extopts.conf" | cut -d: -f2`"
 	fi
-	if [ "$DIRECTION" = "s" ]; then
-		PORT_OPTS="--sport "$PORT""
-	elif [ "$DIRECTION" = "d" ]; then
-		PORT_OPTS="--dport "$PORT""
-	elif [ "$DIRECTION" = "b" ]; then
-		PORT_OPTS="--dport "$PORT" --sport "$PORT""
+	if [ "$DIRECTION" = 's' ]; then
+		PORT_OPTS="--sport $PORT"
+	elif [ "$DIRECTION" = 'd' ]; then
+		PORT_OPTS="--dport $PORT"
+	elif [ "$DIRECTION" = 'b' ]; then
+		PORT_OPTS="--dport $PORT --sport $PORT"
 	else
-		PORT_OPTS="--dport "$PORT""
+		PORT_OPTS="--dport $PORT"
 	fi
 	iptables -A $CHAIN_OUT -p "$PROTO" $PORT_OPTS $EXTOPTS -j RETURN
 done
 # FTP has special annoyances which make it so we have to work with it, all this crap makes dealing with it a lot easier.
 if [ -n "$IPBLOCK_ALLOW_OUTBOUND_FTP" ]; then
 	modprobe -q nf_conntrack_ftp
-	if [ $? -lt "1" ]; then
+	if [ $? -lt '1' ]; then
 		iptables -A $CHAIN_OUT -p tcp --dport 20:21 -m state --state NEW -j RETURN
 		iptables -A $CHAIN_OUT -p tcp --dport 1024: -m state --state ESTABLISHED,RELATED \
 			-m helper --helper ftp -j RETURN
 	else
 		modprobe -q ip_conntrack_ftp
-		if [ $? -lt "1" ]; then
+		if [ $? -lt '1' ]; then
 			iptables -A $CHAIN_OUT -p tcp --dport 20:21 -m state --state NEW -j RETURN
 			iptables -A $CHAIN_OUT -p tcp --dport 1024: -m state --state ESTABLISHED,RELATED \
 				-m helper --helper ftp -j RETURN
@@ -87,9 +87,9 @@ if [ -n "$IPBLOCK_ALLOW_OUTBOUND_FTP" ]; then
 	iptables -A $CHAIN_OUT -m state --state ESTABLISHED,RELATED -j RETURN
 fi
 
-if [ "$IPBLOCK_PROGRAM" = "moblock" ]; then
+if [ "$IPBLOCK_PROGRAM" = 'moblock' ]; then
 	iptables -A $CHAIN_IN  -j NFQUEUE
-elif [ "$IPBLOCK_PROGRAM" = "iplist" ]; then
+elif [ "$IPBLOCK_PROGRAM" = 'iplist' ]; then
 	iptables -A $CHAIN_OUT -m mark --mark 2 -j $DROP
 	iptables -A $CHAIN_OUT -m mark ! --mark 1 -j NFQUEUE
 fi
