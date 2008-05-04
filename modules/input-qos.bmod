@@ -1,0 +1,61 @@
+# VERSION: 0.1
+# REVISION: 0
+# NAME: input-qos
+# REQUIRES:
+
+if [ -n "`echo "${MODULES[*]}" | grep input-qos`" ]; then
+	source "$CONFDIR/qos.conf"
+	source "$INCDIR/qos-functions"
+	export QOS_IN_RATE_MASTER="`set_rate_line`"
+	set_rate_guaranteed
+	set_rate_max
+	set_delay
+	set_classes
+	modprobe imq numdevs=1
+	ip link set imq0 up
+	tc qdisc add dev imq0 handle 1:0 root hfsc default 150
+	tc class add dev imq0 parent 1:0 classid 1:1 hfsc sc rate ${QOS_IN_RATE_MASTER}kbit ul rate ${QOS_IN_RATE_MASTER}kbit
+	tc class add dev imq0 parent 1:1 classid 1:110 hfsc sc umax 1500b dmax ${QOS_IN_DELAY[1]}ms rate ${QOS_IN_RATE[1]}kbit ul rate ${QOS_IN_ULRATE[1]}kbit
+	tc class add dev imq0 parent 1:1 classid 1:120 hfsc sc umax 1500b dmax ${QOS_IN_DELAY[2]}ms rate ${QOS_IN_RATE[2]}kbit ul rate ${QOS_IN_ULRATE[2]}kbit
+	tc class add dev imq0 parent 1:1 classid 1:130 hfsc sc umax 1500b dmax ${QOS_IN_DELAY[3]}ms rate ${QOS_IN_RATE[3]}kbit ul rate ${QOS_IN_ULRATE[3]}kbit
+	tc class add dev imq0 parent 1:1 classid 1:140 hfsc sc umax 1500b dmax ${QOS_IN_DELAY[4]}ms rate ${QOS_IN_RATE[4]}kbit ul rate ${QOS_IN_ULRATE[4]}kbit
+	tc class add dev imq0 parent 1:1 classid 1:150 hfsc sc umax 1500b dmax ${QOS_IN_DELAY[5]}ms rate ${QOS_IN_RATE[5]}kbit ul rate ${QOS_IN_ULRATE[5]}kbit
+	tc qdisc add dev imq0 parent 1:110 handle 110: sfq perturb 10
+	tc qdisc add dev imq0 parent 1:120 handle 120: sfq perturb 10
+	tc qdisc add dev imq0 parent 1:130 handle 130: sfq perturb 10
+	tc qdisc add dev imq0 parent 1:140 handle 140: sfq perturb 10
+	tc qdisc add dev imq0 parent 1:150 handle 150: red limit 1000000 min 5000 max 100000 avpkt 1000 burst 50
+	tc filter add dev imq0 parent 1:0 prio 0 protocol ip handle 110 fw flowid 1:110
+	tc filter add dev imq0 parent 1:0 prio 0 protocol ip handle 120 fw flowid 1:120
+	tc filter add dev imq0 parent 1:0 prio 0 protocol ip handle 130 fw flowid 1:130
+	tc filter add dev imq0 parent 1:0 prio 0 protocol ip handle 140 fw flowid 1:140
+	tc filter add dev imq0 parent 1:0 prio 0 protocol ip handle 150 fw flowid 1:150
+	iptables -t mangle -N QOS-IN
+	iptables -t mangle -I PREROUTING -i $EXTIF -j QOS-IN
+	for rules in "${QOS_IN_RULES[@]}"; do
+		for item in $rules; do
+			QOS_VALUE="`echo $item | cut -d'=' -f2`"
+			case $item in
+				protocol=*)
+					PROTOCOL="$QOS_VALUE"
+				;;
+				sport=*)
+					SPORT="--sport $QOS_VALUE"
+				;;
+				dport=*)
+					DPORT="--dport $QOS_VALUE"
+				;;
+				mark=*)
+					MARK="$QOS_VALUE"
+				;;
+			esac
+		done
+		iptables -t mangle -A QOS-IN -p $PROTOCOL $SPORT $DPORT -m mark --mark 0 -j MARK --set-mark $MARK
+		unset PROTOCOL SPORT DPORT MARK QOS_VALUE
+	done
+	iptables -t mangle -A QOS-IN -p tcp -m tos --tos Minimize-Delay -m mark --mark 0 -j MARK --set-mark 110
+	iptables -t mangle -A QOS-IN -p tcp -m tos --tos Maximize-Throughput -m mark --mark 0 -j MARK --set-mark 120
+	iptables -t mangle -A QOS-IN -p tcp -m tos --tos Maximize-Reliability -m mark --mark 0 -j MARK --set-mark 130
+	iptables -t mangle -A QOS-IN -p tcp -m tos --tos Minimize-Cost -m mark --mark 0 -j MARK --set-mark 140
+	iptables -t mangle -A QOS-IN -p tcp -m tos --tos Normal-Service -m mark --mark 0 -j MARK --set-mark 150
+fi
