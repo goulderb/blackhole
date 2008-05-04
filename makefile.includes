@@ -1,0 +1,6 @@
+PREFIX?=/usr
+ETCDIR?=/etc
+BINDIR?=/bin
+SBINDIR?=/sbin
+SHAREDIR?=$(PREFIX)/share
+MANDIR?=$(PREFIX)/man
