@@ -19,7 +19,7 @@ qos_rate() {
 		fi
 	elif [ "$TYPE" = '%' ]; then
 		if [ "$VALUE" -gt 0 ] && [ "$VALUE" -lt 100 ]; then
-			RESULT="$[$VALUE * 400 / 100]"
+			RESULT="$[$VALUE * $QOS_OUT_RATE_MASTER / 100]"
 			return 0
 		else
 			die "$DIRECTION QoS $ITEM value out of range."
