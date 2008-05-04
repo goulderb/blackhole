@@ -61,7 +61,6 @@ remove-service-slackware:
 DATETIME=$(shell date +%Y%m%d-%k%M)
 PWD=$(shell pwd)
 dev-snapshot:
-	-rm -r blackhole-$(DATETIME)
 	-rm blackhole-$(DATETIME).tar.bz2
 	mkdir blackhole-$(DATETIME)
 	make -C config install DESTDIR=$(PWD)/blackhole-$(DATETIME)
