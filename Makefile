@@ -16,25 +16,25 @@ install:
 	make -C config install
 	make -C includes install
 	make -C modules install
-	install -d -m 0755 $(DESTDIR)$(BINDIR)
-	install -m 0755 blackhole $(DESTDIR)$(BINDIR)/
+	install -d -m 0755 $(DESTDIR)$(SBINDIR)
+	install -m 0755 blackhole $(DESTDIR)$(SBINDIR)/
 
 update:
 	make -C includes install
 	make -C modules install
-	install -d -m 0755 $(DESTDIR)$(BINDIR)
-	install -m 0755 blackhole $(DESTDIR)$(BINDIR)/
+	install -d -m 0755 $(DESTDIR)$(SBINDIR)
+	install -m 0755 blackhole $(DESTDIR)$(SBINDIR)/
 
 remove:
 	make -C config remove
 	make -C includes remove
 	make -C modules remove
 	rmdir $(DESTDIR)$(SHAREDIR)/blackhole
-	rm $(DESTDIR)$(BINDIR)/blackhole
+	rm $(DESTDIR)$(SBINDIR)/blackhole
 
 install-service-crux:
 	install -d $(DESTDIR)$(ETCDIR)/rc.d
-	ln -s $(BINDIR)/blackhole $(DESTDIR)$(ETCDIR)/rc.d/blackhole
+	ln -s $(SBINDIR)/blackhole $(DESTDIR)$(ETCDIR)/rc.d/blackhole
 	@echo "Please add \"blackhole\" to the SERVICES array in /etc/rc.conf"
 
 remove-service-crux:
@@ -42,7 +42,7 @@ remove-service-crux:
 	@echo "Please remove \"blackhole\" from the SERVICES array in /etc/rc.conf"
 
 install-service-slackware:
-	ln -s $(BINDIR)/blackhole $(DESTDIR)$(ETCDIR)/rc.d/rc.firewall
+	ln -s $(SBINDIR)/blackhole $(DESTDIR)$(ETCDIR)/rc.d/rc.firewall
 	ifeq ($(strip $(DESTDIR)),)
 		@echo '/etc/rc.d/rc.firewall start' >> '/etc/rc.d/rc.local'
 	else
