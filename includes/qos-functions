@@ -42,7 +42,7 @@ set_rate_line() {
 		fi
 		if [ "$TYPE" = 'kbit/s' ]; then
 			if [ "$VALUE" -gt 0 ]; then
-				echo "$VALUE"
+				QOS_OUT_RATE_MASTER="$VALUE"
 				return 0
 			else
 				die 'QoS out_rate_line value can not be zero.'
@@ -64,7 +64,7 @@ set_rate_line() {
 		fi
 		if [ "$TYPE" = 'kbit/s' ]; then
 			if [ "$VALUE" -gt 0 ]; then
-				echo "$VALUE"
+				QOS_IN_RATE_MASTER="$VALUE"
 				return 0
 			else
 				die 'QoS in_rate_line value can not be zero.'
