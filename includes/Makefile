@@ -8,3 +8,7 @@ install:
 
 remove:
 	rm -rf $(DESTDIR)$(SHAREDIR)/blackhole/includes
+
+dev-package:
+	install -d -m 0755 $(DESTDIR)/includes
+	install -m 0644 -t $(DESTDIR)/includes/ $(SRC) Makefile

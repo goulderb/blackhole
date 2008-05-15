@@ -11,3 +11,7 @@ install:
 
 remove:
 	rm -rf $(DESTDIR)$(SHAREDIR)/blackhole/includes/modules
+
+dev-package:
+	install -d -m 0755 $(DESTDIR)/modules
+	install -m 0644 -t $(DESTDIR)/modules/ $(SRC) Makefile

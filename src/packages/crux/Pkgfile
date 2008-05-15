@@ -1,0 +1,16 @@
+# Description: Blackhole firewall.
+# URL: http://dcaf-security.org/blackhole.php
+# Maintainer: Brett Goulder, predatorfreak at dcaf-security dot org
+# Packager: Brett Goulder, predatorfreak at dcaf-security dot org
+
+name=blackhole
+version=@VERSION@
+release=1
+source=(blackhole-$version.tar.bz2)
+
+build() {
+	cd blackhole-$version
+	make
+	make DESTDIR=$PKG install install-service-crux
+}
+

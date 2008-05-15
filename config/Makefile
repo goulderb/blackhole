@@ -9,3 +9,8 @@ install:
 
 remove:
 	rm -rf $(DESTDIR)$(ETCDIR)/blackhole
+
+dev-package:
+	install -d -m 0755 $(DESTDIR)/config
+	install -m 0644 -t $(DESTDIR)/config/ $(SRC) Makefile
+

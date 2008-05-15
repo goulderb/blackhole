@@ -58,15 +58,31 @@ remove-service-slackware:
 	endfi
 
 ### Developer targets.
-DATETIME=$(shell date +%Y%m%d-%k%M)
+DATETIME=$(shell date +%Y%m%d-%0k%M)
 PWD=$(shell pwd)
+
+dev-package:
+	 install -m 0644 -t $(DESTDIR) blackhole Makefile makefile.includes \
+		 COPYING Credits About
+
 dev-snapshot:
 	-rm blackhole-$(DATETIME).tar.bz2
 	mkdir blackhole-$(DATETIME)
-	make -C config install DESTDIR=$(PWD)/blackhole-$(DATETIME)
-	make -C includes install DESTDIR=$(PWD)/blackhole-$(DATETIME)
-	make -C modules install DESTDIR=$(PWD)/blackhole-$(DATETIME)
-	make install DESTDIR=$(PWD)/blackhole-$(DATETIME)
+	make -C config dev-package DESTDIR=$(PWD)/blackhole-$(DATETIME)
+	make -C includes dev-package DESTDIR=$(PWD)/blackhole-$(DATETIME)
+	make -C modules dev-package DESTDIR=$(PWD)/blackhole-$(DATETIME)
+	make dev-package DESTDIR=$(PWD)/blackhole-$(DATETIME)
 	tar -cf blackhole-$(DATETIME).tar blackhole-$(DATETIME)/*
 	rm -r blackhole-$(DATETIME)
 	bzip2 -9 blackhole-$(DATETIME).tar
+
+dev-crux-package: dev-snapshot
+	-rm -r build/packages/crux
+	mkdir -p build/packages/crux
+	cp src/packages/crux/Pkgfile build/packages/crux/
+	cp src/packages/crux/Makefile build/packages/crux/
+	ln blackhole-$(DATETIME).tar.bz2 build/packages/crux/blackhole-$(DATETIME).tar.bz2
+	sed -i -e 's/@VERSION@/$(DATETIME)/' build/packages/crux/Pkgfile
+	make -C build/packages/crux package
+	rm build/packages/crux/Makefile
+
