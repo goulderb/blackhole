@@ -5,7 +5,7 @@
 
 iptables -N TCPFLAG
 iptables -A INPUT -i $EXTIF -p tcp -j TCPFLAG
-iptables -A INPUT -i $EXTIF -p tcp ! --syn -m state --state NEW -j $DROP
+iptables -A TCPFLAG -i $EXTIF -p tcp ! --syn -m state --state NEW -j $DROP
 iptables -A TCPFLAG -m state --state INVALID -j $DROP
 iptables -A TCPFLAG -p tcp --tcp-flags ALL NONE -m state --state NEW,ESTABLISHED,RELATED -j $DROP
 iptables -A TCPFLAG -p tcp --tcp-flags ACK,FIN FIN -m state --state NEW,ESTABLISHED,RELATED -j $DROP
