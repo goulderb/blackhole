@@ -12,7 +12,7 @@ if [ -n "${INPUT_ALLOW[*]}" ]; then
 		if [ -f "$CONFDIR/extopts.conf" ]; then	
 		 EXTOPTS="`grep $PORT/input $CONFDIR/extopts.conf | cut -d: -f2`"
 		fi
-		iptables -A INPUT_ALLOW -p "$PROTO" --dport "$PORT" $EXTOPTS -j ACCEPT
+		iptables -A INPUT_ALLOW -p "$PROTO" --dport "$PORT" --m state --state NEW,ESTABLISHED,RELATED $EXTOPTS -j ACCEPT
 	done
 	iptables -A INPUT_ALLOW -j RETURN
 fi

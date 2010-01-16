@@ -5,15 +5,16 @@
 
 iptables -N TCPFLAG
 iptables -A INPUT -i $EXTIF -p tcp -j TCPFLAG
+iptables -A INPUT -i $EXTIF -p tcp ! --syn -m state --state NEW -j $DROP
 iptables -A TCPFLAG -m state --state INVALID -j $DROP
-iptables -A TCPFLAG -p tcp --tcp-flags ALL NONE -j $DROP
-iptables -A TCPFLAG -p tcp --tcp-flags ACK,FIN FIN -j $DROP
-iptables -A TCPFLAG -p tcp --tcp-flags ACK,PSH PSH -j $DROP
-iptables -A TCPFLAG -p tcp --tcp-flags FIN,RST FIN,RST -j $DROP
-iptables -A TCPFLAG -p tcp --tcp-flags ALL FIN,URG,PSH -j $DROP
-iptables -A TCPFLAG -p tcp --tcp-flags ALL SYN,RST,ACK,FIN,URG -j $DROP
-iptables -A TCPFLAG -p tcp --tcp-flags ALL ALL -j $DROP
-iptables -A TCPFLAG -p tcp --tcp-flags ALL FIN -j $DROP
-iptables -A TCPFLAG -p tcp --tcp-flags SYN,RST SYN,RST -j $DROP
-iptables -A TCPFLAG -p tcp --tcp-flags SYN,FIN SYN,FIN -j $DROP
+iptables -A TCPFLAG -p tcp --tcp-flags ALL NONE -m state --state NEW,ESTABLISHED,RELATED -j $DROP
+iptables -A TCPFLAG -p tcp --tcp-flags ACK,FIN FIN -m state --state NEW,ESTABLISHED,RELATED -j $DROP
+iptables -A TCPFLAG -p tcp --tcp-flags ACK,PSH PSH -m state --state NEW,ESTABLISHED,RELATED -j $DROP
+iptables -A TCPFLAG -p tcp --tcp-flags FIN,RST FIN,RST -m state --state NEW,ESTABLISHED,RELATED -j $DROP
+iptables -A TCPFLAG -p tcp --tcp-flags ALL FIN,URG,PSH -m state --state NEW,ESTABLISHED,RELATED -j $DROP
+iptables -A TCPFLAG -p tcp --tcp-flags ALL SYN,RST,ACK,FIN,URG -m state --state NEW,ESTABLISHED,RELATED -j $DROP
+iptables -A TCPFLAG -p tcp --tcp-flags ALL ALL -m state --state NEW,ESTABLISHED,RELATED -j $DROP
+iptables -A TCPFLAG -p tcp --tcp-flags ALL FIN -m state --state NEW,ESTABLISHED,RELATED -j $DROP
+iptables -A TCPFLAG -p tcp --tcp-flags SYN,RST SYN,RST -m state --state NEW,ESTABLISHED,RELATED -j $DROP
+iptables -A TCPFLAG -p tcp --tcp-flags SYN,FIN SYN,FIN -m state --state NEW,ESTABLISHED,RELATED -j $DROP
 iptables -A TCPFLAG -j RETURN

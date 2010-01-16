@@ -12,7 +12,7 @@ if [ -n "${OUTPUT_ALLOW[*]}" ]; then
 		if [ -f "$CONFDIR/extopts.conf" ]; then
 		 EXTOPTS="`grep $PORT/output $CONFDIR/extopts.conf | cut -d: -f2`"
 		fi
-		iptables -A OUTPUT_ALLOW -p "$PROTO" --dport "$PORT" $EXTOPTS -j ACCEPT
+		iptables -A OUTPUT_ALLOW -p "$PROTO" --dport "$PORT" -m state --state NEW,ESTABLISHED,RELATED $EXTOPTS -j ACCEPT
 	done
 	iptables -A OUTPUT_ALLOW -j RETURN
 fi

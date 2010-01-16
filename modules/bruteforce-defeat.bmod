@@ -15,5 +15,5 @@ if [ -n "${BRUTEFORCE_DEFEAT[*]}" ]; then
 		iptables -A BRUTEFORCE_DEFEAT -p $PROTO --dport $PORT -m state --state NEW \
 			-m recent --update --seconds 15 -j $DROP
 	done
-	iptables -A BRUTEFORCE_DEFEAT -m recent --set -j RETURN
+	iptables -A BRUTEFORCE_DEFEAT -m recent --set -m state --state NEW -j RETURN
 fi
