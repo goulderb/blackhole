@@ -1,4 +1,6 @@
 Blackhole to do list for later versions:
+Required for 3.0: Utilize ipsets to do port allowing and IP blocking.
+Required for 3.0: Utilize iptables/ipset save and restore functions to speed up execution.
 Required for 3.0: Port forwarding for NAT
 Required for 3.0: DMZ for NAT
 Highly desired for 3.0: Traffic shaping.
